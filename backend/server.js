@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { connectDB } from './src/config/db.js';
 import logger from './src/config/logger.js';
+import { checkAIServiceHealth } from './src/services/aiServiceProxy.js';
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 // Connect to MongoDB
 connectDB();
 
-// Health Check Endpoint
+// Health Check Endpoint for Gateway
 app.get('/health', (req, res) => {
   res.status(200).json({
     success: true,
@@ -27,6 +28,16 @@ app.get('/health', (req, res) => {
     status: 'Operational',
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV || 'development'
+  });
+});
+
+// AI Service Connectivity Check Endpoint
+app.get('/api/v1/ai-health', async (req, res) => {
+  const aiHealth = await checkAIServiceHealth();
+  res.status(200).json({
+    success: true,
+    gatewayStatus: 'Operational',
+    aiService: aiHealth
   });
 });
 
@@ -39,7 +50,7 @@ app.get('/api/v1', (req, res) => {
   });
 });
 
-// Global 444 / 404 Handler
+// Global 404 Handler
 app.use((req, res) => {
   res.status(404).json({
     success: false,

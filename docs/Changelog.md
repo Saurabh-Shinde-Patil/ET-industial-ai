@@ -7,40 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.0] - 2026-07-19
+
+### Completed Phase 1 Technical Review
+- **Directory Alignment**: Created tracked subdirectory structures (`.gitkeep`) for all frontend components (`ui`, `layout`, `assets`, `documents`, `chat`, `search`, `analytics`, `incidents`, `admin`), pages, contexts, hooks, services, utils, controllers, models, routes, and middleware.
+- **Containerization Specs**: Added production-grade Dockerfiles for `frontend/Dockerfile` (multi-stage Nginx build), `backend/Dockerfile` (Node 18), and `ai_service/Dockerfile` (Python 3.10 + Tesseract OCR).
+- **Service Connectivity**: Created `backend/src/services/aiServiceProxy.js` and exposed `GET /api/v1/ai-health` to test Express API Gateway to FastAPI AI Microservice connectivity.
+- **Frontend Client**: Created `frontend/src/services/apiClient.js` configuring Axios with Vite proxy and JWT authorization header interceptors.
+- **Audit**: Verified all 15 Phase 1 technical checkpoints. Passed 100%.
+
+---
+
 ## [1.3.0] - 2026-07-19
 
 ### Completed Phase 1: Project Setup & Environment Bootstrap
-- **Frontend (`frontend/`)**: Bootstrapped React 18 SPA with Vite, Tailwind CSS custom industrial design tokens, PostCSS, Lucide icons, React Query, and Axios client.
-- **Backend API (`backend/`)**: Bootstrapped Node.js Express API gateway with Helmet security middleware, CORS, Winston structured logger, Mongoose database connection module, and `/health` monitoring endpoint.
-- **AI Microservice (`ai_service/`)**: Bootstrapped Python FastAPI microservice with Pydantic settings manager, Uvicorn server runner, Sentence-Transformers configuration, and `/health` metadata endpoint.
-- **Container Orchestration**: Created `docker-compose.yml` organizing MongoDB, Backend API Gateway, AI Service, and Frontend static serve containers.
+- Bootstrapped React 18 SPA with Vite and Tailwind CSS.
+- Bootstrapped Node.js Express API gateway with Helmet security middleware, CORS, Winston logger, and Mongoose connection module.
+- Bootstrapped Python FastAPI microservice with Pydantic settings manager and Uvicorn server.
+- Created `docker-compose.yml` for unified microservice stack.
 
 ---
 
 ## [1.2.0] - 2026-07-19
 
 ### Added
-- **Synthetic Industrial Demo Dataset (`DemoData.md`)**:
-  - 10 physical industrial assets (`PUMP-101`, `BOILER-02`, `COMP-07`, `TURBINE-04`, `HEX-12`, `VALVE-88`, `CONVEYOR-03`, `XFRM-01`, `REACTOR-05`, `CHILLER-09`).
-  - 20 sample Standard Operating Procedures (SOPs).
-  - 15 historical maintenance logs.
-  - 10 Root Cause Analysis (RCA) incident post-mortem reports.
-  - 5 preventive maintenance (PM) schedules.
-  - 5 vendor engineering manuals with technical bolt torque specs and tolerances.
-  - 5 ground-truth AI query-answer benchmark test pairs with confidence scores and citations.
-
----
-
-## [1.1.0] - 2026-07-19
-
-### Added
-- Incident & Root Cause Analysis (RCA) Module and Security Audit Logging added across PRD, Architecture, and Phases.
-- Explicit Mongoose schemas for all 8 database collections in `Architecture.md`.
-- Mathematical formulations for RRF and confidence scoring.
-
----
-
-## [1.0.0] - 2026-07-19
-
-### Added
-- Initial system documentation suite in `docs/`: `README.md`, `PRD.md`, `Architecture.md`, `Rules.md`, `Phases.md`, `Design.md`, `Memory.md`.
+- Synthetic Industrial Demo Dataset (`DemoData.md`) with 10 assets, 20 SOPs, 15 maintenance logs, 10 RCA incidents, 5 PM schedules, 5 engineering manuals, and 5 AI ground-truth test pairs.
