@@ -7,6 +7,7 @@ import logger from './src/config/logger.js';
 import { checkAIServiceHealth } from './src/services/aiServiceProxy.js';
 import { setupSwagger } from './src/config/swagger.js';
 import authRoutes from './src/routes/authRoutes.js';
+import userRoutes from './src/routes/userRoutes.js';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ setupSwagger(app);
 
 // Mount API Routes
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
 
 /**
  * @openapi
