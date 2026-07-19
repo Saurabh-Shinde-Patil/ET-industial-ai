@@ -9,14 +9,14 @@
 
 ## 1. Current Project Status
 
-- **Project Status**: Phase 2 Complete (`Authentication & RBAC System`). Phase 3 (`Main Layout & Dashboard Infrastructure`) ready to execute.
-- **Current Phase**: Phase 2 Completed / Phase 3 Ready
-- **Current Feature**: User Authentication, JWT Tokens & Role-Based Access Control (RBAC)
+- **Project Status**: Phase 3 Complete (`Main Layout & Dashboard Infrastructure`). Phase 4 (`User & Role Administration & Audit Logging`) ready to execute.
+- **Current Phase**: Phase 3 Completed / Phase 4 Ready
+- **Current Feature**: Main Layout Shell, Sidebar, Navbar, Theme Engine & Command Dashboard
 - **Current File**: `docs/Memory.md`
-- **Current Sprint**: Sprint 2 (Authentication & Security)
+- **Current Sprint**: Sprint 3 (Application Shell & Dashboard UI)
 - **Current Branch**: `main`
 - **Last Updated**: 2026-07-19
-- **Next Task**: Await approval to start Phase 3 (Main Layout & Dashboard UI: Industrial Sidebar, Header, Global State, Dark/Light Theme Engine).
+- **Next Task**: Await approval to start Phase 4 (User & Role Administration & Security Audit Logging: Admin user table, permission editor, security audit log viewer).
 
 ---
 
@@ -35,9 +35,9 @@
 - [x] **Phase 1 Technical Review**: 15/15 Technical Verification Checkpoints Audited & Passed.
 - [x] **DevOps Infrastructure**: Husky pre-commit hooks, ESLint/Prettier, GitHub Actions CI workflow, Swagger UI OpenAPI (`/docs`), Docker Health Checks.
 - [x] **Phase 2**: Authentication & RBAC System (Mongoose User schema with BCrypt password hashing, JWT authorization, Express auth/rbac middleware, 8 plant role seeder, AuthContext, ProtectedRoute, RoleGuard, industrial dark command center LoginPage UI).
+- [x] **Phase 3**: Main Layout & Dashboard Infrastructure (ThemeContext dark/light switcher, MainLayout application shell, responsive Sidebar with collapse & microservice status indicators, Navbar with Global Search shortcut & user badges, Command Center DashboardPage with 4 KPI cards, Recharts query activity curve, document catalog bar chart, and Low Confidence Query Audit Log table).
 
-### Pending Implementation (Phases 3 - 15)
-- [ ] Phase 3: Main Layout, Sidebar & Theme Switcher Engine
+### Pending Implementation (Phases 4 - 15)
 - [ ] Phase 4: User Administration, Role Management Panel & Security Audit Logging
 - [ ] Phase 5: Plant Asset Hierarchy Tree & Detail Engine
 - [ ] Phase 6: Document Management & Asset Association Pipeline
@@ -53,26 +53,13 @@
 
 ---
 
-## 3. Registered User Roles (8 Roles)
-1. `Plant Operator` (username: `operator`)
-2. `Maintenance Engineer` (username: `maint_eng`)
-3. `Reliability Engineer` (username: `reliability_eng`)
-4. `Safety Officer` (username: `safety_officer`)
-5. `Production Engineer` (username: `prod_eng`)
-6. `Plant Manager` (username: `plant_mgr`)
-7. `Knowledge Admin` (username: `doc_admin`)
-8. `Admin` (username: `admin`)
+## 3. Living Development Log
 
-Default Demo Password: `Password123!`
-
----
-
-## 4. Living Development Log
-
-### Log Entry: 2026-07-19 — Phase 2 Authentication & RBAC System Complete
-- Implemented Mongoose `User` model (`backend/src/models/userModel.js`) with pre-save BCrypt hashing and `matchPassword` verification.
-- Built JWT Auth Middleware (`protect`) and Role Guard (`authorize`) in `backend/src/middleware/`.
-- Created Auth REST controller (`authController.js`) and routes (`authRoutes.js`) for `/login`, `/register`, `/me`, and `/seed`.
-- Created initial demo accounts seeder (`seedUsers.js`) covering all 8 plant roles.
-- Built Frontend `AuthContext.jsx`, `authService.js`, `ProtectedRoute.jsx`, `RoleGuard.jsx`, and `LoginPage.jsx` featuring demo role selector grid and dark industrial styling.
-- Phase 2 complete & committed to git.
+### Log Entry: 2026-07-19 — Phase 3 Main Layout & Dashboard Infrastructure Complete
+- Created `ThemeContext.jsx` for dark/light theme switching with HTML attribute synchronization.
+- Built `Navbar.jsx` featuring branding, global search shortcut (`Ctrl + K`), upload trigger, theme toggle, and user role display.
+- Built `Sidebar.jsx` with responsive collapse mode (64px vs 260px) and live microservice status indicators (`API Gateway`, `Vector Engine`).
+- Created `MainLayout.jsx` wrapping application pages cleanly.
+- Built `DashboardPage.jsx` featuring 4 KPI cards, Recharts AreaChart (query activity), BarChart (document catalog), and Low-Confidence Query Audit Log table.
+- Added `PUT /api/v1/users/preferences` endpoint in `userController.js` and `userRoutes.js`.
+- Phase 3 complete & committed to git.
