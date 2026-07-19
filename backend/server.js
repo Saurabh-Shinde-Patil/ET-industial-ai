@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { connectDB } from './src/config/db.js';
 import logger from './src/config/logger.js';
 import { checkAIServiceHealth } from './src/services/aiServiceProxy.js';
+import { setupSwagger } from './src/config/swagger.js';
 
 dotenv.config();
 
@@ -20,24 +21,45 @@ app.use(express.urlencoded({ extended: true }));
 // Connect to MongoDB
 connectDB();
 
-// Health Check Endpoint for Gateway
+// Mount OpenAPI Swagger UI Documentation
+setupSwagger(app);
+
+/**
+ * @openapi
+ * /health:
+ *   get:
+ *     summary: API Gateway Health Status
+ *     description: Returns operational status of the REST API Gateway.
+ *     responses:
+ *       200:
+ *         description: System operational
+ */
 app.get('/health', (req, res) => {
   res.status(200).json({
     success: true,
     service: 'Industrial Knowledge Intelligence API Gateway',
     status: 'Operational',
     timestamp: new Date().toISOString(),
-    env: process.env.NODE_ENV || 'development'
+    env: process.env.NODE_ENV || 'development',
   });
 });
 
-// AI Service Connectivity Check Endpoint
+/**
+ * @openapi
+ * /api/v1/ai-health:
+ *   get:
+ *     summary: AI Microservice Connectivity Status
+ *     description: Proxies health check request to Python FastAPI AI service.
+ *     responses:
+ *       200:
+ *         description: Connectivity status payload
+ */
 app.get('/api/v1/ai-health', async (req, res) => {
   const aiHealth = await checkAIServiceHealth();
   res.status(200).json({
     success: true,
     gatewayStatus: 'Operational',
-    aiService: aiHealth
+    aiService: aiHealth,
   });
 });
 
@@ -46,7 +68,7 @@ app.get('/api/v1', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Welcome to Industrial Knowledge Intelligence REST API v1',
-    documentation: '/docs'
+    documentation: '/docs',
   });
 });
 
@@ -55,7 +77,7 @@ app.use((req, res) => {
   res.status(404).json({
     success: false,
     message: `API Endpoint Not Found: ${req.method} ${req.originalUrl}`,
-    error: 'NotFoundError'
+    error: 'NotFoundError',
   });
 });
 
@@ -66,11 +88,12 @@ app.use((err, req, res, next) => {
     success: false,
     message: err.message || 'Internal Server Error',
     error: err.name || 'ServerError',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
 // Start Server
 app.listen(PORT, () => {
   logger.info(`Industrial API Gateway running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+  logger.info(`OpenAPI Swagger documentation available at http://localhost:${PORT}/docs`);
 });
