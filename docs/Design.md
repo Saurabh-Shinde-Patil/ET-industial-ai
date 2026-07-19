@@ -3,7 +3,7 @@
 ## Project Name: Industrial Knowledge Intelligence – Unified Asset & Operations Brain
 **Hackathon**: Economic Times AI Hackathon 2.0  
 **Problem Statement**: PS-8 – AI for Industrial Knowledge Intelligence  
-**Document Version**: 1.0.0  
+**Document Version**: 1.1.0 (Architecture Review & Screen Alignment Verified)  
 **Author**: Lead UI/UX Designer & Frontend Architect  
 
 ---
@@ -102,49 +102,31 @@ Monospace / Code / Citations: **JetBrains Mono** (Weights: 400, 500)
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 ```
 
-### Type Scale Table
+---
 
-| Scale Identifier | Font Size | Line Height | Weight | Usage |
-| :--- | :--- | :--- | :--- | :--- |
-| `Heading-XL` | 32px (2rem) | 38px | 700 (Bold) | Dashboard main titles, Page headers |
-| `Heading-L` | 24px (1.5rem) | 30px | 600 (SemiBold)| Section titles, Modal headers |
-| `Heading-M` | 18px (1.125rem)| 24px | 600 (SemiBold)| Card titles, Drawer section headers |
-| `Body-Regular` | 14px (0.875rem)| 20px | 400 (Regular) | Primary table cells, chat response text |
-| `Body-Small` | 12px (0.75rem) | 16px | 400 (Regular) | Metadata badges, tooltips, secondary tags |
-| `Code-Citation`| 13px (0.8125rem)|18px | 500 (Medium) | Citation snippets, document code tags |
+## 4. Screen Layouts & Domain UI Components
+
+### 4.1 Screen Blueprint Registry
+
+| Screen ID | Page Name | Primary UI Components |
+| :--- | :--- | :--- |
+| **SCR-01** | `LoginPage.jsx` | Industrial Login Container, Role Indicator Pill, Auth Alert |
+| **SCR-02** | `DashboardPage.jsx` | 4 KPI Cards, Query Volume Area Chart, Document Category Pie Chart, Low Confidence Review Table |
+| **SCR-03** | `AssetsPage.jsx` | Expandable `AssetTree`, Search Bar, Asset Specs Key-Value Grid, Add Asset Modal |
+| **SCR-04** | `AssetDetailPage.jsx` | Asset Header Banner, Specs Table, Linked Documents Tab, Work Log History Timeline, AI PM Recommendations Card |
+| **SCR-05** | `DocumentsPage.jsx` | `UploadModal` (Drag & Drop), Filter Bar, OCR Status Badge (`Processing`, `Ready`), Document Table, Download Stream Drawer |
+| **SCR-06** | `ChatPage.jsx` | Conversation Stream, `ConfidenceMeter` (High/Med/Low), Inline Citation Pills, `CitationDrawer` (Right Slide-over), Safety Warning Box |
+| **SCR-07** | `SearchPage.jsx` | Global Search Input with Auto-complete, Category Filter Sidebar, `SearchResultCard` with RRF score indicator |
+| **SCR-08** | `IncidentsPage.jsx` | Incident Table, Severity Pill (`Critical`, `Major`, `Minor`), `IncidentModal`, `RcaCard` |
+| **SCR-09** | `AdminUsersPage.jsx` | User Management Table, Role Selection Modal, Deactivate Button, `AuditLogViewer` Tab |
 
 ---
 
-## 4. Component Visual Specifications
-
-### 4.1 Buttons
-
-```
-[ Primary Action ]   -> Background: var(--color-primary), Text: Dark/White, Glow on Hover
-[ Secondary Action ] -> Background: var(--bg-tertiary), Border: 1px var(--border-color)
-[ Danger Action ]    -> Background: var(--color-danger), Text: White
-[ Glass Icon Button] -> Background: rgba(255,255,255,0.05), Border: 1px var(--border-color)
-```
-
-- **Padding**: Medium (`10px 18px`), Small (`6px 12px`).
-- **Border Radius**: `6px` (Industrial crisp rounded edges).
-- **Hover Micro-interaction**: `transform: translateY(-1px)`, `transition: all 0.2s ease`.
-
----
-
-### 4.2 Cards & Containers
-
-- **Background**: `var(--bg-card)` with `backdrop-filter: var(--glass-backdrop)`.
-- **Borders**: `1px solid var(--border-color)`.
-- **Card Hover State**: Border shifts to `var(--border-highlight)` with subtle cyan shadow glow (`var(--shadow-glow)`).
-
----
-
-### 4.3 Chat Interface & Citation Drawer
+### 4.2 Chat Interface & Citation Drawer Visual Spec
 
 ```
 +-----------------------------------------------------------------------------------+
-| AI Assistant  [Confidence: 94% High]                                              |
+| AI Operations Brain  [Confidence: 94% High]                                       |
 |                                                                                   |
 | Based on SOP-BOILER-03 (Page 14), prior to engaging Boiler-3 burners:             |
 | 1. Ensure natural gas supply pressure is stabilized at 4.5 bar.                   |
@@ -156,41 +138,9 @@ Monospace / Code / Citations: **JetBrains Mono** (Weights: 400, 500)
 +-----------------------------------------------------------------------------------+
 ```
 
-- **User Messages**: Aligned Right, Dark Charcoal Glass bubble.
-- **AI Messages**: Aligned Left, Slate Grey Card container with Cyan left border.
-- **Citations Badge**: Clickable monospace pills (`[SOP-Boiler-03.pdf (Pg 14)]`) opening a sliding right-hand Citation Drawer displaying the exact highlighted snippet.
-
 ---
 
-### 4.4 Status Indicators & Badges
-
-- **Operational / Active**: Green pill with pulsating dot indicator.
-- **Maintenance / Warning**: Amber pill with solid alert icon.
-- **Trip / Critical**: Red pill with alert hazard border.
-- **Confidence Meter**:
-  - `High (>85%)`: Solid Emerald Badge (`#10B981`)
-  - `Medium (65-85%)`: Amber Badge (`#F59E0B`)
-  - `Low (<65%)`: Red Badge (`#EF4444`) with Warning Notice
-
----
-
-## 5. Layout Architecture & Responsive Breakpoints
-
-### Breakpoint Specs
-- `sm`: 640px (Mobile portrait)
-- `md`: 768px (Tablets / Rugged floor devices)
-- `lg`: 1024px (Small laptops)
-- `xl`: 1280px (Standard Desktop Workstations)
-- `2xl`: 1536px (Multi-monitor Plant Control Room Displays)
-
-### Screen Layout Structure
-- **Sidebar**: Fixed 260px width on desktop (collapsible to 72px icon mode); slide-over drawer on mobile (`md`).
-- **Header / Navbar**: Fixed 64px height featuring Global Search shortcut (`Ctrl + K`), Role Badge, Quick Upload, and Theme Toggle.
-- **Main Viewport**: Scrollable fluid container with max-width constraints on wide screens (`max-w-7xl`).
-
----
-
-## 6. Accessibility & Motion Guidelines
+## 5. Accessibility & Motion Guidelines
 
 ### Accessibility (WCAG 2.1 AA)
 1. **Contrast Ratio**: Text to background contrast >= 4.5:1 across both dark and light modes.

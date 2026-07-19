@@ -3,18 +3,18 @@
 ## Project Name: Industrial Knowledge Intelligence – Unified Asset & Operations Brain
 **Hackathon**: Economic Times AI Hackathon 2.0  
 **Problem Statement**: PS-8 – AI for Industrial Knowledge Intelligence  
-**Document Version**: 1.0.0  
+**Document Version**: 1.1.0 (Architecture Review & Database Alignment Verified)  
 **Author**: Senior AI Solution Architect & Tech Lead  
 
 ---
 
 ## 1. High-Level Architecture Overview
 
-The **Industrial Knowledge Intelligence (IKI)** platform utilizes a modular, microservice-inspired tier architecture comprising:
+The **Industrial Knowledge Intelligence (IKI)** platform utilizes a modular microservice-inspired tier architecture comprising:
 1. **Frontend Presentation Tier**: React 18 SPA built with Vite, Tailwind CSS, React Query, and Lucide Icons.
-2. **API Gateway & Business Logic Tier**: Node.js + Express REST API managing user authorization (JWT + RBAC), Asset Hierarchy management, Metadata storage, Work Log CRUD, and AI orchestration RPCs.
-3. **Operational Database Tier**: MongoDB with Mongoose ORM storing User profiles, Asset nodes, Document metadata, Maintenance logs, Incident reports, Audit logs, and Analytics logs.
-4. **AI & Vector Intelligence Microservice**: Python 3.10+ FastAPI engine responsible for OCR (PyTesseract), text chunking, dense vector embeddings (`sentence-transformers`), Vector DB indexing (FAISS/ChromaDB), Hybrid Retrieval, Guardrails, and RAG answer generation.
+2. **API Gateway & Business Logic Tier**: Node.js + Express REST API managing user authorization (JWT + RBAC), Asset Hierarchy management, Metadata storage, Work Log CRUD, Incident/RCA tracking, Audit logging, and AI orchestration RPCs.
+3. **Operational Database Tier**: MongoDB with Mongoose ORM storing User profiles, Asset nodes, Document metadata, Maintenance logs, Incident RCA reports, AI PM recommendations, Chat history, and Security audit logs.
+4. **AI & Vector Intelligence Microservice**: Python 3.10+ FastAPI engine responsible for OCR (PyTesseract), text chunking, dense vector embeddings (`sentence-transformers`), Vector DB indexing (FAISS/ChromaDB), Hybrid Retrieval (RRF), Guardrails, and RAG answer generation.
 
 ---
 
@@ -24,7 +24,7 @@ The **Industrial Knowledge Intelligence (IKI)** platform utilizes a modular, mic
 +-----------------------------------------------------------------------------------+
 |                                 FRONTEND TIER                                     |
 |                       React 18 + Vite SPA (Tailwind CSS)                          |
-|  [ Dashboard ]  [ Asset Graph ]  [ AI Chatbot ]  [ Search ]  [ Ingestion ]        |
+| [ Dashboard ] [ Asset Graph ] [ AI Chatbot ] [ Search ] [ Ingestion ] [ Incidents ]|
 +------------------------------------------+----------------------------------------+
                                            | HTTP / REST (JWT Auth Header)
                                            v
@@ -33,7 +33,7 @@ The **Industrial Knowledge Intelligence (IKI)** platform utilizes a modular, mic
 |                          Node.js / Express Gateway                                |
 |  - Auth Middleware (JWT / RBAC)           - Asset Hierarchy Manager               |
 |  - Document Metadata Service              - Maintenance & Incident Service        |
-|  - Analytics & Audit Logger               - AI Microservice Proxy Client          |
+|  - Audit & Security Logger                - AI Microservice Proxy Client          |
 +----------------------+-----------------------------------+------------------------+
                        |                                   |
         Mongoose Driver|                                   | HTTP / JSON (Internal RPC)
@@ -44,138 +44,102 @@ The **Industrial Knowledge Intelligence (IKI)** platform utilizes a modular, mic
 | - users         - assets      |   |  - Document Ingestion Pipeline (OCR/PyPDF)    |
 | - documents     - worklogs    |   |  - Chunking & Tokenizer Engine                |
 | - incidents     - audit_logs  |   |  - Embedding Engine (Sentence-Transformers)   |
-| - chat_history  - analytics   |   |  - Vector Index Manager (FAISS / ChromaDB)     |
+| - chat_history  - recommendations |  - Vector Index Manager (FAISS / ChromaDB)     |
 +-------------------------------+   |  - RAG Core (LangChain + Guardrails + LLM)    |
                                     +-----------------------------------------------+
 ```
 
 ---
 
-## 3. Tier Deep-Dives
+## 3. Tier Deep-Dives & File Structure Alignment
 
-### 3.1 Frontend Architecture (React + Vite)
-- **State Management**: React Query (TanStack Query v5) for server state caching, invalidation, and polling; React Context API for global Authentication (`AuthContext`) and Theme (`ThemeContext`).
-- **Routing**: `react-router-dom` v6 with protected layout wrappers (`ProtectedRoute`, `RoleGuard`).
-- **UI Components**: Atomic design structure (`components/ui` for primitives like Button, Card, Badge; `components/domain` for AssetTree, ChatWindow, CitationDrawer, AnalyticsCharts).
-- **HTTP Client**: Axios instance configured with base URL, request interceptors (attaching JWT bearer token), and response interceptors (handling 401 token refresh/logout).
-
-### 3.2 Backend API Architecture (Node.js + Express)
-- **Controller-Service-Repository Pattern**: Clean separation of routes, request controllers, business services, and database data models.
-- **Middleware Chain**:
-  - `corsMiddleware`: Cross-origin request handling.
-  - `helmet`: HTTP header security.
-  - `jwtAuth`: Verification of JWT token in `Authorization` header.
-  - `rbacGuard(roles)`: Enforcement of required user roles.
-  - `errorHandler`: Standardized error envelope formatter.
-
-### 3.3 AI Microservice Architecture (Python + FastAPI)
-- **FastAPI Core**: Async non-blocking API endpoints for document ingestion, vector searching, RAG generation, and recommendation synthesis.
-- **Ingestion & OCR Engine**:
-  - `pdfplumber` / `PyPDF2` for native text PDFs.
-  - `pytesseract` / `EasyOCR` with OpenCV preprocessing for scanned paper documents and drawings.
-- **Vector Index Engine**:
-  - Local persistent FAISS / ChromaDB index.
-  - Vector similarity metric: Cosine Similarity / Inner Product (`IndexFlatIP` after L2 normalization).
-- **LLM Integration Layer**:
-  - Local inference via `Ollama` (Llama-3 8B / Mistral 7B) or fallback to `OpenAI API`.
-  - Prompt Template with strict system guardrails enforcing document citations and zero external speculation.
-
----
-
-## 4. Pipeline Data Flows
-
-### 4.1 Document Processing & Vector Embedding Pipeline
-
+### 3.1 Directory & File Layout
 ```
-  [ Upload Document ]
-          │
-          ▼
-  [ Node.js API ] ──(Save File & Metadata)──► [ MongoDB ]
-          │
-          ├─────────────────────────────────────────────────┐
-          │ Send Ingestion Task                             │
-          ▼                                                 │
-  [ FastAPI AI Service ]                                    │
-          │                                                 │
-          ├──► Is Scanned / Image? ──YES──► [ OCR Engine ] ─┤
-          │         │                                       │
-          │        NO                                       │
-          │         ▼                                       │
-          ├──► [ Text Extractor (PyPDF) ] ──────────────────┤
-          │                                                 │
-          ▼                                                 │
-  [ Cleaning & Normalization ] ◄────────────────────────────┘
-          │
-          ▼
-  [ Chunking Engine ] (Recursive Split: 500 tokens, 100 overlap)
-          │
-          ▼
-  [ Embedding Engine ] (`all-mpnet-base-v2` -> 768-dim Vector)
-          │
-          ▼
-  [ Vector DB (FAISS/Chroma) ] ◄── Store Vectors + Chunk Metadata
-                                   (DocID, AssetID, Page, Text)
+ET_industrial_ai/
+├── docs/                        # Project Specifications & Living Documentation
+├── frontend/                    # React 18 + Vite Web Application
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ui/              # Button, Card, Input, Modal, Badge, Dropdown
+│   │   │   ├── layout/          # MainLayout, Navbar, Sidebar
+│   │   │   ├── assets/          # AssetTree, AssetCard, AssetModal
+│   │   │   ├── documents/       # UploadModal, DocumentTable, CitationDrawer
+│   │   │   ├── chat/            # ChatWindow, ChatMessage, ConfidenceMeter
+│   │   │   ├── search/          # SearchBar, SearchResultCard, SearchFilter
+│   │   │   ├── analytics/       # KpiCard, QueryVolumeChart, LowConfidenceTable
+│   │   │   ├── incidents/       # IncidentModal, IncidentTable, RcaCard
+│   │   │   └── admin/           # UserTable, RoleModal, AuditLogViewer
+│   │   ├── pages/               # Views (DashboardPage, AssetsPage, AssetDetailPage, etc.)
+│   │   ├── context/             # AuthContext, ThemeContext
+│   │   ├── hooks/               # useAuth, useAssets, useChat, useDocuments, useAnalytics
+│   │   ├── services/            # apiClient, authService, assetService, aiService, etc.
+│   │   ├── styles/              # index.css, theme.css
+│   │   └── utils/               # formatters, constants, helpers
+│   ├── package.json
+│   └── vite.config.js
+├── backend/                     # Node.js + Express REST API Gateway
+│   ├── src/
+│   │   ├── controllers/         # auth, user, asset, document, worklog, incident, ai, analytics, audit
+│   │   ├── models/              # user, asset, document, maintenanceLog, incident, chatHistory, auditLog, recommendation
+│   │   ├── routes/              # auth, user, asset, document, worklog, incident, ai, analytics, audit
+│   │   ├── middleware/          # auth, rbac, upload, errorHandler, auditLogger
+│   │   ├── services/            # aiServiceProxy, documentService
+│   │   └── config/              # db.js, logger.js
+│   ├── package.json
+│   └── server.js
+├── ai_service/                  # Python FastAPI AI Engine
+│   ├── app/
+│   │   ├── api/                 # chat, search, ingest, recommend, health
+│   │   ├── core/                # config, prompts, vector_store, logger
+│   │   ├── services/            # ocr_service, pdf_service, chunking_service, embedding_service, rag_service, recommendation_service
+│   │   └── models/              # schemas.py
+│   ├── requirements.txt
+│   └── main.py
+└── docker-compose.yml           # Multi-container orchestration
 ```
 
 ---
 
-### 4.2 Retrieval-Augmented Generation (RAG) Flow
+## 4. RAG Pipeline & Mathematical Formulation
 
-```
-  [ Operator Query: "Why did Compressor-7 trip last month?" ]
-                             │
-                             ▼
-                    [ Frontend Client ]
-                             │
-                             ▼
-                    [ Node.js API Gateway ]
-                             │
-                             ▼
-                    [ FastAPI AI Service ]
-                             │
-       ┌─────────────────────┴─────────────────────┐
-       ▼                                           ▼
-[ Dense Vector Search ]                  [ Sparse Keyword Search ]
-(FAISS Cosine Similarity)                (Asset Code & Tag Match)
-       │                                           │
-       └─────────────────────┬─────────────────────┘
-                             ▼
-                 [ Hybrid Reciprocal Rank Fusion ]
-                             │
-                             ▼
-                [ Top K Context Chunks (k=5) ]
-                             │
-                             ▼
-                [ Confidence Score Evaluator ]
-                             │
-                 ┌───────────┴───────────┐
-                 │                       │
-      Score >= 0.60             Score < 0.60
-                 │                       │
-                 ▼                       ▼
-   [ Strict RAG Prompt Builder ]  [ Polite Low-Confidence Fallback ]
-   (Inject Context & Citations)   ("Insufficient data in plant docs")
-                 │
-                 ▼
-     [ LLM Inference Engine ]
-                 │
-                 ▼
-     [ Response Post-Processor ] (Extract inline citations & safety alerts)
-                 │
-                 ▼
-    [ Return Answer + Citations + Confidence score to User ]
-```
+### 4.1 Hybrid Retrieval Algorithm: Reciprocal Rank Fusion (RRF)
+To prevent keyword-only or vector-only retrieval failure, candidate document chunks are retrieved via both dense vector similarity and sparse BM25 keyword matching, then combined using RRF:
+
+$$RRF\_Score(d) = \sum_{m \in M} \frac{1}{k + r_m(d)}$$
+
+Where:
+- $M$ represents retrieval methods (Dense Vector Similarity and Sparse BM25 / Equipment Tag match).
+- $r_m(d)$ is the rank position of document chunk $d$ in retrieval method $m$.
+- $k$ is a constant smoothing hyperparameter set to $60$.
+
+---
+
+### 4.2 Confidence Score & Fallback Thresholds
+
+Vector distance $d_{cos}$ is computed as:
+
+$$d_{cos}(q, c) = 1 - \frac{\vec{q} \cdot \vec{c}}{\|\vec{q}\| \|\vec{c}\|}$$
+
+Confidence Score Percentage ($CS$) is defined as:
+
+$$CS = \max(0, 1 - d_{cos}(q, c)) \times 100\%$$
+
+| Match Tier | Score Threshold | System Behavior |
+| :--- | :--- | :--- |
+| **High Confidence** | $CS \ge 85\%$ | LLM generates grounded answer with green badge citation pills. |
+| **Medium Confidence** | $65\% \le CS < 85\%$ | LLM generates answer with amber caution badge and verification prompt. |
+| **Low Confidence** | $CS < 65\%$ | System suppresses LLM generation and returns polite fallback: *"Information not found in plant knowledge base."* |
 
 ---
 
 ## 5. Sequence Diagrams
 
-### 5.1 Authentication Flow
+### 5.1 Authentication & RBAC Flow
 ```
 User             Frontend SPA            Node API Gateway           MongoDB
  │                   │                          │                      │
  ├── Enter Credentials─►                        │                      │
- │                   ├── POST /api/auth/login──►│                      │
+ │                   ├── POST /api/v1/auth/login►│                     │
  │                   │                          ├── Find User By Email─►│
  │                   │                          │◄── User Record───────┤
  │                   │                          ├── Verify Password    │
@@ -185,163 +149,165 @@ User             Frontend SPA            Node API Gateway           MongoDB
  │                   │   Storage / Context      │                      │
 ```
 
-### 5.2 Document Ingestion Flow
-```
-Admin            Frontend SPA            Node Gateway          FastAPI AI          FAISS Vector DB
- │                    │                       │                    │                      │
- ├── Select File &───►│                       │                    │                      │
- │   Asset Link       ├── POST /api/docs ────►│                    │                      │
- │                    │   (multipart/form)    ├── Save File & DB───►│                      │
- │                    │                       ├── POST /ingest ───►│                      │
- │                    │                       │   to AI Service    ├── Run OCR / PyPDF───┐│
- │                    │                       │                    │◄── Chunk Text ────┘│
- │                    │                       │                    ├── Embed Chunks ────┐│
- │                    │                       │                    │◄── 768-dim Vectors─┘│
- │                    │                       │                    ├── Add Vectors ──────►│
- │                    │                       │◄── Ingestion Done──┤                      │
- │◄── Status Updated ─┼◄── Upload Success ────┤                    │                      │
-```
+---
+
+## 6. Complete API Endpoint Design Specification
+
+### 6.1 Authentication & User Routes (`/api/v1/auth`, `/api/v1/users`)
+- `POST /api/v1/auth/login`: Authenticate user & return JWT token.
+- `POST /api/v1/auth/register`: Register new user (Admin only).
+- `GET /api/v1/auth/me`: Get current user session profile.
+- `GET /api/v1/users`: List all users with pagination and search (Admin only).
+- `PUT /api/v1/users/:id/role`: Update user role assignment (Admin only).
+- `DELETE /api/v1/users/:id`: Deactivate user account (Admin only).
+- `PUT /api/v1/users/preferences`: Update user UI theme/preferences.
+
+### 6.2 Asset Hierarchy Routes (`/api/v1/assets`)
+- `GET /api/v1/assets/tree`: Fetch hierarchical plant tree.
+- `GET /api/v1/assets`: Query asset list with filter parameters.
+- `POST /api/v1/assets`: Create asset node.
+- `GET /api/v1/assets/:id`: Fetch asset profile, specs, and linked docs.
+- `PUT /api/v1/assets/:id`: Update asset details.
+- `DELETE /api/v1/assets/:id`: Soft delete asset node.
+
+### 6.3 Document Routes (`/api/v1/documents`)
+- `POST /api/v1/documents/upload`: Upload file, metadata, and link asset IDs.
+- `GET /api/v1/documents`: List documents with category and asset filters.
+- `GET /api/v1/documents/:id`: Download / view document metadata.
+- `DELETE /api/v1/documents/:id`: Remove document metadata and vector chunks.
+
+### 6.4 Work Log & Incident Routes (`/api/v1/worklogs`, `/api/v1/incidents`)
+- `GET /api/v1/worklogs`: Fetch maintenance work orders for an asset.
+- `POST /api/v1/worklogs`: Create new maintenance log entry.
+- `GET /api/v1/incidents`: Fetch RCA incident reports.
+- `POST /api/v1/incidents`: Log new RCA incident post-mortem.
+
+### 6.5 AI & RAG Routes (`/api/v1/ai`)
+- `POST /api/v1/ai/chat`: Process natural language query via RAG engine.
+- `POST /api/v1/ai/search`: Execute hybrid RRF search.
+- `GET /api/v1/ai/recommendations/:assetId`: Synthesize AI preventive maintenance recommendations.
+- `POST /api/v1/ai/ocr-reindex`: Trigger document re-ocr and vector indexing.
+
+### 6.6 Analytics & Audit Routes (`/api/v1/analytics`, `/api/v1/audit-logs`)
+- `GET /api/v1/analytics/kpis`: Fetch system-wide KPI metrics.
+- `GET /api/v1/analytics/query-volume`: Fetch query activity over time.
+- `GET /api/v1/analytics/low-confidence-logs`: Fetch low confidence queries for review.
+- `GET /api/v1/audit-logs`: Fetch system security audit trail.
 
 ---
 
-## 6. API Endpoint Design Specification
-
-### 6.1 Authentication Endpoints (`/api/v1/auth`)
-- `POST /login`: Authenticate user credentials & issue JWT token.
-- `POST /register`: Admin registration of new plant personnel.
-- `GET /me`: Fetch currently authenticated user profile & permissions.
-
-### 6.2 Asset Management Endpoints (`/api/v1/assets`)
-- `GET /`: Retrieve hierarchical tree of all plant assets.
-- `POST /`: Create a new asset node.
-- `GET /:id`: Fetch asset details, specifications, linked documents, and work log history.
-- `PUT /:id`: Update asset metadata.
-- `DELETE /:id`: Soft delete asset.
-
-### 6.3 Document Management Endpoints (`/api/v1/documents`)
-- `POST /upload`: Upload document file with metadata and asset associations.
-- `GET /`: Query/filter list of documents (by asset, doc type, date).
-- `GET /:id`: Fetch document details & file download stream.
-- `DELETE /:id`: Remove document and purge associated vector chunks.
-
-### 6.4 AI & Knowledge Intelligence Endpoints (`/api/v1/ai`)
-- `POST /chat`: Execute natural language RAG query with conversation history.
-- `POST /search`: Execute hybrid semantic/keyword search across vector index.
-- `GET /recommendations/:assetId`: Generate AI preventive maintenance recommendations.
-- `POST /ocr-reindex`: Trigger manual OCR extraction and re-embedding for a document.
-
----
-
-## 7. Database Collection Schema Design (MongoDB)
+## 7. Complete Database Collections Registry (MongoDB Schemas)
 
 ```javascript
-// Collection: users
-{
-  _id: ObjectId,
-  username: String,
-  email: String,
-  passwordHash: String,
-  role: String, // 'Plant Operator', 'Maintenance Engineer', 'Admin', etc.
-  department: String,
-  isActive: Boolean,
-  createdAt: Date,
-  updatedAt: Date
-}
+// Collection 1: users
+const userSchema = new Schema({
+  username: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
+  passwordHash: { type: String, required: true },
+  role: { 
+    type: String, 
+    enum: ['Plant Operator', 'Maintenance Engineer', 'Reliability Engineer', 'Safety Officer', 'Production Engineer', 'Plant Manager', 'Knowledge Admin', 'Admin'],
+    required: true 
+  },
+  department: { type: String },
+  isActive: { type: Boolean, default: true },
+  preferences: { theme: { type: String, default: 'dark' } }
+}, { timestamps: true });
 
-// Collection: assets
-{
-  _id: ObjectId,
-  assetCode: String, // e.g., 'COMP-07'
-  name: String, // e.g., 'Main Gas Compressor'
-  category: String, // 'Compressor', 'Pump', 'Boiler', 'Turbine'
-  parentAssetId: ObjectId, // Null if top-level plant unit
-  location: String, // 'Building A - Sector 3'
-  status: String, // 'Operational', 'Under Maintenance', 'Failed'
-  specifications: Map,
-  installedDate: Date,
-  createdAt: Date
-}
+// Collection 2: assets
+const assetSchema = new Schema({
+  assetCode: { type: String, required: true, unique: true, index: true }, // e.g. COMP-07
+  name: { type: String, required: true },
+  category: { type: String, required: true }, // Boiler, Pump, Compressor, Turbine
+  parentAssetId: { type: Schema.Types.ObjectId, ref: 'Asset', default: null },
+  location: { type: String },
+  status: { type: String, enum: ['Operational', 'Under Maintenance', 'Failed', 'Decommissioned'], default: 'Operational' },
+  specifications: { type: Map, of: String },
+  installedDate: { type: Date }
+}, { timestamps: true });
 
-// Collection: documents
-{
-  _id: ObjectId,
-  title: String,
-  fileName: String,
-  filePath: String,
-  fileType: String, // 'pdf', 'docx', 'png'
-  docCategory: String, // 'SOP', 'Manual', 'RCA', 'Safety', 'Maintenance Log'
-  linkedAssetIds: [ObjectId],
-  isScanned: Boolean,
-  chunkCount: Number,
-  ingestionStatus: String, // 'Pending', 'Processing', 'Completed', 'Failed'
-  uploadedBy: ObjectId,
-  createdAt: Date
-}
+// Collection 3: documents
+const documentSchema = new Schema({
+  title: { type: String, required: true },
+  fileName: { type: String, required: true },
+  filePath: { type: String, required: true },
+  fileType: { type: String, enum: ['pdf', 'docx', 'txt', 'png', 'jpg'], required: true },
+  docCategory: { type: String, enum: ['SOP', 'Manual', 'RCA', 'Safety', 'Maintenance Log', 'P&ID Drawing'], required: true },
+  linkedAssetIds: [{ type: Schema.Types.ObjectId, ref: 'Asset' }],
+  isScanned: { type: Boolean, default: false },
+  chunkCount: { type: Number, default: 0 },
+  ingestionStatus: { type: String, enum: ['Pending', 'Processing', 'Completed', 'Failed'], default: 'Pending' },
+  uploadedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true }
+}, { timestamps: true });
 
-// Collection: maintenance_logs
-{
-  _id: ObjectId,
-  assetId: ObjectId,
-  logType: String, // 'Preventive', 'Breakdown', 'Inspection'
-  summary: String,
-  description: String,
-  technician: String,
-  performedAt: Date,
-  partsReplaced: [String],
-  downtimeHours: Number,
-  createdAt: Date
-}
+// Collection 4: maintenance_logs
+const maintenanceLogSchema = new Schema({
+  assetId: { type: Schema.Types.ObjectId, ref: 'Asset', required: true, index: true },
+  logType: { type: String, enum: ['Preventive', 'Breakdown', 'Inspection'], required: true },
+  summary: { type: String, required: true },
+  description: { type: String },
+  technician: { type: String, required: true },
+  performedAt: { type: Date, default: Date.now },
+  partsReplaced: [{ type: String }],
+  downtimeHours: { type: Number, default: 0 }
+}, { timestamps: true });
 
-// Collection: chat_history
-{
-  _id: ObjectId,
-  userId: ObjectId,
-  sessionId: String,
-  userQuery: String,
-  aiAnswer: String,
-  confidenceScore: Number,
-  citations: [
-    {
-      docId: ObjectId,
-      docTitle: String,
-      pageNumber: Number,
-      snippet: String
-    }
-  ],
-  createdAt: Date
-}
+// Collection 5: incidents
+const incidentSchema = new Schema({
+  assetId: { type: Schema.Types.ObjectId, ref: 'Asset', required: true },
+  title: { type: String, required: true },
+  severity: { type: String, enum: ['Critical', 'Major', 'Minor'], required: true },
+  eventDate: { type: Date, required: true },
+  rootCause: { type: String, required: true },
+  correctiveActions: [{ type: String }],
+  reportedBy: { type: Schema.Types.ObjectId, ref: 'User' }
+}, { timestamps: true });
+
+// Collection 6: recommendations
+const recommendationSchema = new Schema({
+  assetId: { type: Schema.Types.ObjectId, ref: 'Asset', required: true },
+  recommendedActions: [{
+    action: String,
+    priority: { type: String, enum: ['High', 'Medium', 'Low'] },
+    reasoning: String,
+    suggestedIntervalDays: Number
+  }],
+  generatedAt: { type: Date, default: Date.now }
+}, { timestamps: true });
+
+// Collection 7: chat_history
+const chatHistorySchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+  sessionId: { type: String, required: true },
+  userQuery: { type: String, required: true },
+  aiAnswer: { type: String, required: true },
+  confidenceScore: { type: Number, required: true },
+  citations: [{
+    docId: { type: Schema.Types.ObjectId, ref: 'Document' },
+    docTitle: String,
+    pageNumber: Number,
+    snippet: String
+  }]
+}, { timestamps: true });
+
+// Collection 8: audit_logs
+const auditLogSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  action: { type: String, required: true }, // AUTH_LOGIN, DOC_UPLOAD, DOC_DELETE, ROLE_CHANGE
+  details: { type: String },
+  ipAddress: { type: String },
+  timestamp: { type: Date, default: Date.now }
+}, { timestamps: true });
 ```
 
 ---
 
-## 8. Deployment & Containerization Architecture
+## 8. Deployment & Scalability Strategy
 
-```
-                       ┌──────────────────────────────────────┐
-                       │          Nginx Reverse Proxy         │
-                       │           (Port 80 / 443)            │
-                       └──────────────────┬───────────────────┘
-                                          │
-                   ┌──────────────────────┴──────────────────────┐
-                   │                                             │
-                   ▼                                             ▼
-        ┌─────────────────────┐                       ┌─────────────────────┐
-        │  Frontend Container │                       │  Backend Container  │
-        │   (Nginx static)    │                       │  (Node.js Gateway)  │
-        └─────────────────────┘                       └──────────┬──────────┘
-                                                                 │
-                                          ┌──────────────────────┴──────────────────────┐
-                                          ▼                                             ▼
-                               ┌─────────────────────┐                       ┌─────────────────────┐
-                               │    MongoDB Container│                       │ AI Service Container│
-                               │   (Data Directory)  │                       │  (FastAPI + FAISS)  │
-                               └─────────────────────┘                       └─────────────────────┘
-```
-
----
-
-## 9. Scalability & Resilience Strategy
-
-1. **Stateless AI Processing**: The FastAPI AI microservice stores vector embeddings in a shared persistent volume or ChromaDB cluster, allowing API workers to scale horizontally behind a load balancer.
-2. **Asynchronous Ingestion Queues**: Large PDF manual processing is handed off asynchronously so user API calls do not timeout.
-3. **Database Indexing**: Compound indexes on MongoDB collections (`assetCode`, `linkedAssetIds`, `docCategory`) ensure sub-10ms metadata query execution.
+1. **Docker Container Stack**:
+   - `nginx`: Port 80/443 reverse proxy routing `/api` to Backend and static files to Frontend.
+   - `frontend`: React SPA built with Vite PostCSS bundle.
+   - `backend`: Node.js API Gateway cluster.
+   - `ai_service`: Python FastAPI worker container with PyTesseract dependencies.
+   - `mongo`: Persistent volume mapped database container.
+2. **Indexing Strategy**: MongoDB compound indexes on `assetCode`, `linkedAssetIds`, `docCategory`, and `userId` guarantee sub-10ms query execution.

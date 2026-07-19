@@ -3,7 +3,7 @@
 ## Project Name: Industrial Knowledge Intelligence – Unified Asset & Operations Brain
 **Hackathon**: Economic Times AI Hackathon 2.0  
 **Problem Statement**: PS-8 – AI for Industrial Knowledge Intelligence  
-**Document Version**: 1.0.0  
+**Document Version**: 1.1.0 (Architecture Review & Feature Alignment Verified)  
 **Author**: Senior Tech Lead & Project Manager  
 
 ---
@@ -15,7 +15,7 @@
 | **Phase 1** | **Project Setup & Environment Bootstrap** | Workspace init, boilerplate, folder structure, Docker Compose setup. | 4 Hours |
 | **Phase 2** | **Authentication & RBAC System** | JWT Auth, user schemas, login/register views, role route guards. | 6 Hours |
 | **Phase 3** | **Main Layout & Dashboard Infrastructure** | Industrial sidebar, header, global state, dark/light theme engine. | 5 Hours |
-| **Phase 4** | **User & Role Administration** | Admin user table, permission editor, profile management. | 4 Hours |
+| **Phase 4** | **User & Role Administration & Audit Logging**| Admin user table, permission editor, security audit log viewer. | 5 Hours |
 | **Phase 5** | **Asset Hierarchy & Knowledge Graph** | Asset tree modeling, asset CRUD, detail pages, technical specs. | 8 Hours |
 | **Phase 6** | **Document Management System** | Doc upload UI, multi-format file parser, doc-to-asset linking. | 7 Hours |
 | **Phase 7** | **OCR & Document Ingestion Engine** | PyTesseract/EasyOCR integration, image PDF processing, table extractor. | 8 Hours |
@@ -24,9 +24,9 @@
 | **Phase 10** | **RAG Core Engine & AI Chat System** | Conversational UI, LangChain RAG pipeline, prompt guardrails, citations. | 10 Hours |
 | **Phase 11** | **Unified Knowledge & Hybrid Search** | Semantic + BM25 keyword search, search filters, document viewer drawer. | 7 Hours |
 | **Phase 12** | **Preventive Maintenance Recommendations** | Historical log pattern analyzer, proactive PM checklist generator. | 6 Hours |
-| **Phase 13** | **Industrial Analytics & Insights** | KPI cards, Recharts visualization, query volume, low-confidence audit log. | 6 Hours |
-| **Phase 14** | **End-to-End System Testing & Guardrail Audit**| Hallucination testing, security audit, RBAC check, load test. | 5 Hours |
-| **Phase 15** | **Containerization & Deployment** | Multi-stage Dockerfiles, Docker Compose stack, Nginx reverse proxy. | 4 Hours |
+| **Phase 13** | **Incident & Root Cause Analysis (RCA) Module**| Failure event logging, RCA report upload, asset incident history tab. | 6 Hours |
+| **Phase 14** | **Industrial Analytics & Audit Dashboard** | KPI cards, Recharts visualization, query volume, low-confidence audit log. | 6 Hours |
+| **Phase 15** | **Containerization, Testing & Deployment** | End-to-end security audit, Docker Compose stack, Nginx reverse proxy. | 5 Hours |
 
 ---
 
@@ -103,24 +103,30 @@
 
 ---
 
-### Phase 4: User & Role Administration
-- **Objective**: Build an Admin panel to manage users, assign plant roles, and view user activity.
-- **Deliverables**: Admin User Management table view, user creation modal, role update modal.
+### Phase 4: User Administration & Audit Logging
+- **Objective**: Build an Admin panel to manage users, assign plant roles, and view security audit logs.
+- **Deliverables**: Admin User Management table view, user creation modal, role update modal, Audit Log Viewer component.
 - **Files Created/Modified**:
   - `frontend/src/pages/AdminUsersPage.jsx`
-  - `frontend/src/components/users/UserModal.jsx`
+  - `frontend/src/components/admin/UserTable.jsx`
+  - `frontend/src/components/admin/RoleModal.jsx`
+  - `frontend/src/components/admin/AuditLogViewer.jsx`
+  - `backend/src/models/auditLogModel.js`
+  - `backend/src/controllers/auditController.js`
+  - `backend/src/middleware/auditLogger.js`
   - `backend/src/routes/userRoutes.js`
-- **Frontend Tasks**: Build user table with search, role filtering, role change modal, and deactivate action.
-- **Backend Tasks**: Create CRUD endpoints for user management (`GET /users`, `PUT /users/:id/role`, `DELETE /users/:id`).
+- **Frontend Tasks**: Build user table with search, role filtering, role change modal, and Audit Log tab.
+- **Backend Tasks**: Create CRUD endpoints for user management (`GET /users`, `PUT /users/:id/role`) and Audit logging (`GET /api/v1/audit-logs`).
 - **AI Tasks**: None.
-- **Database Tasks**: Add index on `role` and `email` fields.
-- **Acceptance Criteria**: Admin can view, filter, assign roles to users, and deactivate accounts.
-- **Estimated Time**: 4 Hours
+- **Database Tasks**: Add `audit_logs` collection schema with index on `timestamp` and `userId`.
+- **Acceptance Criteria**: Admin can view, filter, assign roles to users, and inspect security audit logs.
+- **Estimated Time**: 5 Hours
 - **Dependencies**: Phase 2, Phase 3
 - **Progress Checklist**:
   - [ ] User list table view with search
   - [ ] Role modification modal built
-  - [ ] Admin RBAC middleware verified
+  - [ ] Audit Log Mongoose schema and logger middleware active
+  - [ ] AuditLogViewer rendering in Admin Panel
 
 ---
 
@@ -261,7 +267,7 @@
 - **Files Created/Modified**:
   - `frontend/src/pages/SearchPage.jsx`
   - `frontend/src/components/search/SearchResultCard.jsx`
-  - `ai_service/app/services/hybrid_search.py`
+  - `ai_service/app/services/hybrid_search_service.py`
 - **Frontend Tasks**: Search input with debounced auto-complete, filter sidebar, result cards with match score badges.
 - **Backend Tasks**: Combine text index results from MongoDB with vector results from AI service.
 - **AI Tasks**: Implement Reciprocal Rank Fusion (RRF) algorithm to rank vector and keyword results.
@@ -281,12 +287,13 @@
 - **Deliverables**: AI Recommendation card component on Asset detail page, background recommendation synthesis service.
 - **Files Created/Modified**:
   - `backend/src/models/maintenanceLogModel.js`
+  - `backend/src/models/recommendationModel.js`
   - `ai_service/app/services/recommendation_service.py`
   - `frontend/src/components/assets/AssetRecommendations.jsx`
 - **Frontend Tasks**: Recommendation list UI with severity indicators (`Critical`, `Warning`, `Info`), action checklists.
-- **Backend Tasks**: CRUD for maintenance logs (`GET/POST /api/v1/worklogs`).
+- **Backend Tasks**: CRUD for maintenance logs (`GET/POST /api/v1/worklogs`) and recommendations (`GET /api/v1/ai/recommendations/:assetId`).
 - **AI Tasks**: Summarize failure patterns across past logs, generate structured PM checklists and inspection intervals.
-- **Database Tasks**: `maintenance_logs` collection schema.
+- **Database Tasks**: `maintenance_logs` and `recommendations` collection schemas.
 - **Acceptance Criteria**: Clicking "Generate AI PM Analysis" on an asset displays actionable preventive maintenance steps.
 - **Estimated Time**: 6 Hours
 - **Dependencies**: Phase 5, Phase 10
@@ -297,8 +304,32 @@
 
 ---
 
-### Phase 13: Industrial Analytics & Knowledge Dashboard
-- **Objective**: Render plant-wide operational intelligence KPIs, query metrics, document coverage, and audit logs.
+### Phase 13: Incident & Root Cause Analysis (RCA) Module
+- **Objective**: Log failure events, upload RCA post-mortem reports, and link incident history to asset nodes for AI context.
+- **Deliverables**: Incident Management page, Incident Modal form, RCA Card component on Asset Detail page.
+- **Files Created/Modified**:
+  - `backend/src/models/incidentModel.js`
+  - `backend/src/controllers/incidentController.js`
+  - `backend/src/routes/incidentRoutes.js`
+  - `frontend/src/pages/IncidentsPage.jsx`
+  - `frontend/src/components/incidents/IncidentModal.jsx`
+  - `frontend/src/components/incidents/RcaCard.jsx`
+- **Frontend Tasks**: Incident table, new incident modal, RCA summary cards on Asset Detail view.
+- **Backend Tasks**: Incident CRUD endpoints (`POST /api/v1/incidents`, `GET /api/v1/incidents`).
+- **AI Tasks**: Automatically ingest uploaded RCA post-mortem PDF documents into vector index.
+- **Database Tasks**: `incidents` schema with references to `Asset` and `User`.
+- **Acceptance Criteria**: Engineers can record equipment failure incidents and view past RCA reports linked to the asset.
+- **Estimated Time**: 6 Hours
+- **Dependencies**: Phase 5, Phase 6
+- **Progress Checklist**:
+  - [ ] Incident Mongoose schema created
+  - [ ] Frontend Incidents page and creation modal built
+  - [ ] Incident records linked to vector ingestion pipeline
+
+---
+
+### Phase 14: Industrial Analytics & Knowledge Dashboard
+- **Objective**: Render plant-wide operational intelligence KPIs, query metrics, document coverage, and low-confidence query logs.
 - **Deliverables**: Analytics Dashboard page with Recharts visual components.
 - **Files Created/Modified**:
   - `frontend/src/pages/DashboardPage.jsx`
@@ -320,29 +351,9 @@
 
 ---
 
-### Phase 14: End-to-End System Testing & Guardrail Audit
-- **Objective**: Systematically audit system performance, RBAC security, zero-hallucination enforcement, and API reliability.
-- **Deliverables**: Comprehensive test report, fixed edge-case bugs, validated prompt guardrails.
-- **Files Created/Modified**:
-  - `backend/tests/`
-  - `ai_service/tests/`
-- **Frontend Tasks**: Audit UI responsiveness, cross-browser compatibility, and form error handling.
-- **Backend Tasks**: Run API endpoint integration tests, test JWT expiration handling.
-- **AI Tasks**: Run 50+ adversarial domain questions to test zero-hallucination compliance and citation accuracy.
-- **Database Tasks**: Validate indexing and database cleanup scripts.
-- **Acceptance Criteria**: 100% pass rate on RAG guardrail tests; zero security loopholes in RBAC endpoints.
-- **Estimated Time**: 5 Hours
-- **Dependencies**: Phases 1-13
-- **Progress Checklist**:
-  - [ ] RBAC security audit completed
-  - [ ] Adversarial RAG hallucination benchmark passed
-  - [ ] API error handling validated
-
----
-
-### Phase 15: Containerization & Production Deployment
-- **Objective**: Package the entire application stack using Docker Compose and Nginx for single-command production deployment.
-- **Deliverables**: Multi-stage Dockerfiles for Frontend, Backend, and AI Service; `docker-compose.yml`; Nginx config.
+### Phase 15: Containerization, Testing & Deployment
+- **Objective**: Perform end-to-end security audits, RAG hallucination checks, and package the complete stack via Docker Compose.
+- **Deliverables**: Multi-stage Dockerfiles for Frontend, Backend, and AI Service; `docker-compose.yml`; Nginx config; verification suite.
 - **Files Created/Modified**:
   - `frontend/Dockerfile`
   - `backend/Dockerfile`
@@ -354,9 +365,10 @@
 - **AI Tasks**: Python FastAPI container with PyTesseract dependencies installed.
 - **Database Tasks**: MongoDB container volume persistence mapping.
 - **Acceptance Criteria**: Running `docker-compose up --build` launches the complete multi-tier solution successfully.
-- **Estimated Time**: 4 Hours
-- **Dependencies**: Phase 14
+- **Estimated Time**: 5 Hours
+- **Dependencies**: Phases 1-14
 - **Progress Checklist**:
   - [ ] Multi-stage Dockerfiles written
   - [ ] Docker Compose service orchestration verified
+  - [ ] Adversarial RAG hallucination audit passed
   - [ ] Production build validated end-to-end

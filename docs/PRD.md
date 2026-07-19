@@ -3,9 +3,9 @@
 ## Project Name: Industrial Knowledge Intelligence – Unified Asset & Operations Brain
 **Hackathon**: Economic Times AI Hackathon 2.0  
 **Problem Statement**: PS-8 – AI for Industrial Knowledge Intelligence: Unified Asset & Operations Brain  
-**Document Version**: 1.0.0  
+**Document Version**: 1.1.0 (Architecture Review & Cross-Alignment Verified)  
 **Author**: Senior Product Manager & AI Solution Architect  
-**Status**: Approved for Architecture & Phase Planning  
+**Status**: Approved for Execution  
 
 ---
 
@@ -44,20 +44,21 @@ An enterprise-grade, zero-hallucination Industrial AI platform that ingests, dig
 | **BG-3** | **Digitize Legacy Industrial Knowledge** | Convert 100% of scanned PDFs, paper manuals, and tables into searchable vector structures via OCR. |
 | **BG-4** | **Prevent Unplanned Equipment Downtime** | Provide proactive AI recommendations based on historical RCA and maintenance frequency analysis. |
 | **BG-5** | **Enhance Plant Safety & Compliance** | Automatically surface Safety Warnings and pre-start checklist requirements prior to operational actions. |
+| **BG-6** | **Security & Auditability** | 100% immutable audit logging for all document updates, role changes, and AI query interactions. |
 
 ---
 
 ## 3. Target Users & Detailed User Personas
 
-### 3.1 User Roles Overview
-- **Plant Operator**: Frontline staff monitoring real-time plant state; needs quick SOPs and pre-start checklists.
-- **Maintenance Engineer**: Mechanical/Electrical engineers fixing equipment failures; needs manual diagrams, specs, and work order history.
-- **Reliability Engineer**: Long-term asset health analysis; needs RCA patterns, vibration trends, and failure frequency.
-- **Safety Officer**: Audits regulatory compliance, hazard containment, and lockdown procedure validation.
-- **Production Engineer**: Optimizes operational parameters and shift handovers.
-- **Plant Manager**: High-level overview of asset health, knowledge coverage, incident analytics, and team efficiency.
-- **Knowledge Administrator**: Uploads documents, triggers OCR re-indexing, validates embeddings, and configures vector stores.
-- **System Admin**: Manages user roles, access rights, system security, and API keys.
+### 3.1 User Roles Overview (8 Predefined RBAC Roles)
+1. **Plant Operator**: Frontline staff monitoring real-time plant state; needs quick SOPs and pre-start checklists.
+2. **Maintenance Engineer**: Mechanical/Electrical engineers fixing equipment failures; needs manual diagrams, specs, and work order history.
+3. **Reliability Engineer**: Long-term asset health analysis; needs RCA patterns, vibration trends, and failure frequency.
+4. **Safety Officer**: Audits regulatory compliance, hazard containment, and lockdown procedure validation.
+5. **Production Engineer**: Optimizes operational parameters and shift handovers.
+6. **Plant Manager**: High-level overview of asset health, knowledge coverage, incident analytics, and team efficiency.
+7. **Knowledge Administrator**: Uploads documents, triggers OCR re-indexing, validates embeddings, and configures vector stores.
+8. **System Admin**: Manages user roles, access rights, system security, and API keys.
 
 ---
 
@@ -80,20 +81,22 @@ An enterprise-grade, zero-hallucination Industrial AI platform that ingests, dig
 
 ---
 
-## 4. User Stories
+## 4. Complete User Stories Matrix
 
-| Story ID | Persona | Story Statement | Acceptance Criteria |
-| :--- | :--- | :--- | :--- |
-| **US-01** | Maintenance Engineer | As a Maintenance Engineer, I want to search for an asset's maintenance history using its equipment code (e.g., `PUMP-102`), so that I can see past repairs and part replacements. | System returns chronological list of work logs, RCA reports, and exact document source links. |
-| **US-02** | Plant Operator | As a Plant Operator, I want to ask for the exact starting SOP for Boiler-3 in natural language, so that I follow safe startup procedures. | System displays step-by-step SOP text, safety warnings, and PDF page citation. |
-| **US-03** | Reliability Engineer | As a Reliability Engineer, I want the AI to analyze past failure trends and suggest preventive maintenance actions, so that I can prevent unplanned downtime. | AI surfaces failure trends, confidence scores, and recommended inspection schedules. |
-| **US-04** | Knowledge Admin | As a Knowledge Admin, I want to upload PDF equipment manuals (including scanned PDFs), so that the system extracts text via OCR, chunks it, and updates vector indexes. | Progress indicator shows OCR extraction, chunking, embedding generation, and FAISS/Chroma confirmation. |
-| **US-05** | Safety Officer | As a Safety Officer, I want all AI answers regarding hazardous materials or dangerous machinery to explicitly highlight mandatory safety guidelines. | Safety alerts are formatted in high-visibility warning badges with source document references. |
-| **US-06** | Plant Manager | As a Plant Manager, I want to view an analytics dashboard showing document coverage, search volume, top queried assets, and system accuracy metrics. | Dashboard renders real-time charts powered by MongoDB aggregation queries. |
+| Story ID | Persona | Story Statement | Feature Module | Acceptance Criteria |
+| :--- | :--- | :--- | :--- | :--- |
+| **US-01** | Maintenance Engineer | As a Maintenance Engineer, I want to search for an asset's maintenance history using its equipment code (e.g., `PUMP-102`), so that I can see past repairs and part replacements. | Asset Management / History | System returns chronological list of work logs, RCA reports, and exact document source links. |
+| **US-02** | Plant Operator | As a Plant Operator, I want to ask for the exact starting SOP for Boiler-3 in natural language, so that I follow safe startup procedures. | AI Chat / RAG | System displays step-by-step SOP text, safety warnings, and PDF page citation. |
+| **US-03** | Reliability Engineer | As a Reliability Engineer, I want the AI to analyze past failure trends and suggest preventive maintenance actions, so that I can prevent unplanned downtime. | AI Recommendations | AI surfaces failure trends, confidence scores, and recommended inspection schedules. |
+| **US-04** | Knowledge Admin | As a Knowledge Admin, I want to upload PDF equipment manuals (including scanned PDFs), so that the system extracts text via OCR, chunks it, and updates vector indexes. | Document Upload / OCR | Progress indicator shows OCR extraction, chunking, embedding generation, and FAISS/Chroma confirmation. |
+| **US-05** | Safety Officer | As a Safety Officer, I want all AI answers regarding hazardous materials or dangerous machinery to explicitly highlight mandatory safety guidelines. | AI Safety Guardrails | Safety alerts are formatted in high-visibility warning badges with source document references. |
+| **US-06** | Plant Manager | As a Plant Manager, I want to view an analytics dashboard showing document coverage, search volume, top queried assets, and system accuracy metrics. | Industrial Analytics | Dashboard renders real-time charts powered by MongoDB aggregation queries. |
+| **US-07** | Reliability Engineer | As a Reliability Engineer, I want to log Root Cause Analysis (RCA) incident post-mortems and link them to equipment nodes, so that future failures leverage past lessons. | Incident / RCA Module | Incident form saves RCA text, root causes, corrective actions, and tags asset node. |
+| **US-08** | System Admin | As a System Admin, I want to view audit logs of all user authentication events, role changes, and document deletions, so that enterprise compliance is maintained. | Security & Audit Logs | Audit table displays timestamp, user ID, action type, IP address, and details. |
 
 ---
 
-## 5. Functional Requirements
+## 5. Detailed Functional Requirements
 
 ### 5.1 Authentication & Role-Based Access Control (RBAC)
 - **FR-AUTH-1**: User login with email/username and password using JWT authentication.
@@ -127,13 +130,21 @@ An enterprise-grade, zero-hallucination Industrial AI platform that ingests, dig
 - **FR-RAG-3**: Strict Retrieval-Augmented Generation: Prompt instructions strictly command the LLM to rely ONLY on retrieved context chunks.
 - **FR-RAG-4**: Mandatory inline citations: Every statement must reference `[Doc Name, Page X, Para Y]`.
 - **FR-RAG-5**: Confidence Score Calculation: Compute similarity match percentage and surface confidence level (`High (>85%)`, `Medium (65-85%)`, `Low (<65%)`).
-- **FR-RAG-6**: Out-of-bounds / Unknown query handling: If context match score is below 50%, system must answer: *"Information not found in plant knowledge base. Please consult a domain expert or upload relevant manual."*
+- **FR-RAG-6**: Out-of-bounds / Unknown query handling: If context match score is below 60%, system must answer: *"Information not found in plant knowledge base. Please consult a domain expert or upload relevant manual."*
 
 ### 5.7 Prescriptive & Preventive Maintenance Recommendations
 - **FR-REC-1**: Automated analysis of historical maintenance logs and RCA reports linked to an asset.
 - **FR-REC-2**: AI-generated preventive maintenance checklists, component replacement warnings, and inspection frequency recommendations.
 
-### 5.8 Industrial Analytics & Knowledge Dashboard
+### 5.8 Incident & RCA Management
+- **FR-INC-1**: Incident logging form capturing failure event date, severity (`Critical`, `Major`, `Minor`), equipment code, root cause summary, and corrective actions taken.
+- **FR-INC-2**: Automatic OCR parsing and vector indexing of uploaded PDF RCA reports so historical incidents are instantly retrievable in AI Chat.
+
+### 5.9 Audit Logging & Compliance
+- **FR-AUD-1**: Immutable backend audit logging of all authentication events, role modifications, document uploads, document deletions, and low-confidence AI queries.
+- **FR-AUD-2**: System Admin view for searching and filtering security audit records by date range, user, or action type.
+
+### 5.10 Industrial Analytics & Knowledge Dashboard
 - **FR-DASH-1**: High-level KPIs: Total Ingested Docs, Total Vector Chunks, Total Assets Covered, Total Queries Handled, Average Retrieval Confidence.
 - **FR-DASH-2**: Graphical Charts: Most Queried Assets, Document Type Breakdown, System Query Volume Over Time, Low-Confidence Query Log for Admin review.
 
@@ -169,7 +180,7 @@ An enterprise-grade, zero-hallucination Industrial AI platform that ingests, dig
 1. **Zero External Knowledge Injection**: The LLM system prompt explicitly forbids the use of parametric knowledge for specific plant values, tolerances, or operating instructions.
 2. **Citation Requirement**: An answer without document citations is treated as an architectural failure and rejected by response parser middleware.
 3. **Safety First**: Any response containing operational procedures on high-voltage, high-pressure, or toxic material machinery must prepend a **SAFETY WARNING** block extracted from official SDS/SOP docs.
-4. **Low Confidence Fallback**: When vector retrieval distance is below threshold (cosine distance > 0.45 or similarity < 0.60), the AI must decline to answer and offer document upload guidance.
+4. **Low Confidence Fallback**: When vector retrieval distance is below threshold (cosine distance > 0.40 or similarity < 0.60), the AI must decline to answer and offer document upload guidance.
 
 ---
 
@@ -213,4 +224,6 @@ An enterprise-grade, zero-hallucination Industrial AI platform that ingests, dig
 - Document Ingestion Pipeline processing text and scanned PDFs via OCR.
 - Hybrid Semantic Search returning vector chunks with similarity scores.
 - RAG AI Chat interface answering questions with inline citations and confidence meters.
+- Incident & RCA Log capturing failure reports and linking to vector index.
+- Security Audit Log capturing system events for Admin compliance view.
 - Analytics Dashboard rendering document coverage and query activity metrics.

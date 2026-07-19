@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongo:
+    image: mongo:6.0
+    container_name: industrial_mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: et_industrial_ai
+    volumes:
+      - mongo_data:/data/db
+
+  # Node.js API Gateway Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: industrial_backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      NODE_ENV: production
+      MONGODB_URI: mongodb://mongo:27017/et_industrial_ai
+      AI_SERVICE_URL: http://ai_service:8000
+    depends_on:
+      - mongo
+      - ai_service
+
+  # Python FastAPI AI Microservice
+  ai_service:
+    build:
+      context: ./ai_service
+      dockerfile: Dockerfile
+    container_name: industrial_ai_service
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      PORT: 8000
+      ENV: production
+      EMBEDDING_MODEL_NAME: sentence-transformers/all-mpnet-base-v2
+    volumes:
+      - ai_vector_data:/app/data
+
+  # React Vite Frontend (Nginx Production Serve)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: industrial_frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
+  ai_vector_data:
