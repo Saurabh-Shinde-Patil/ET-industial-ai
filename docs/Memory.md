@@ -9,14 +9,14 @@
 
 ## 1. Current Project Status
 
-- **Project Status**: Phase 1 Environment + Enterprise DevOps Hardening Complete (Husky, ESLint/Prettier, GitHub Actions CI, Swagger OpenAPI, Docker Health Checks). Ready for Phase 2.
-- **Current Phase**: Phase 1 Completed / Phase 2 Pending User Approval
-- **Current Feature**: Enterprise DevOps Infrastructure Hardening
+- **Project Status**: Phase 2 Complete (`Authentication & RBAC System`). Phase 3 (`Main Layout & Dashboard Infrastructure`) ready to execute.
+- **Current Phase**: Phase 2 Completed / Phase 3 Ready
+- **Current Feature**: User Authentication, JWT Tokens & Role-Based Access Control (RBAC)
 - **Current File**: `docs/Memory.md`
-- **Current Sprint**: Sprint 1 (DevOps & CI/CD Setup Complete)
+- **Current Sprint**: Sprint 2 (Authentication & Security)
 - **Current Branch**: `main`
 - **Last Updated**: 2026-07-19
-- **Next Task**: Await approval to start Phase 2 (Authentication & RBAC System).
+- **Next Task**: Await approval to start Phase 3 (Main Layout & Dashboard UI: Industrial Sidebar, Header, Global State, Dark/Light Theme Engine).
 
 ---
 
@@ -33,15 +33,10 @@
 - [x] System Changelog (`Changelog.md`)
 - [x] **Phase 1**: Environment Setup & Docker Compose Bootstrap (React 18 + Vite, Tailwind CSS tokens, Express REST Gateway with Winston/Mongoose, Python FastAPI AI Microservice, Docker Compose).
 - [x] **Phase 1 Technical Review**: 15/15 Technical Verification Checkpoints Audited & Passed.
-- [x] **DevOps & Quality Infrastructure**:
-  - [x] Pre-commit Hooks (Husky + lint-staged)
-  - [x] Code Quality (ESLint + Prettier configuration)
-  - [x] CI/CD Pipeline (`.github/workflows/ci.yml` for automated linting & build checks on every push)
-  - [x] OpenAPI 3.0 Documentation (Swagger UI integrated at `/docs` in Express API Gateway)
-  - [x] Container Resiliency (Docker Health Checks for `mongo`, `backend`, `ai_service`, and `frontend` in `docker-compose.yml`)
+- [x] **DevOps Infrastructure**: Husky pre-commit hooks, ESLint/Prettier, GitHub Actions CI workflow, Swagger UI OpenAPI (`/docs`), Docker Health Checks.
+- [x] **Phase 2**: Authentication & RBAC System (Mongoose User schema with BCrypt password hashing, JWT authorization, Express auth/rbac middleware, 8 plant role seeder, AuthContext, ProtectedRoute, RoleGuard, industrial dark command center LoginPage UI).
 
-### Pending Implementation (Phases 2 - 15)
-- [ ] Phase 2: User Authentication & Role-Based Access Control (JWT + RBAC)
+### Pending Implementation (Phases 3 - 15)
 - [ ] Phase 3: Main Layout, Sidebar & Theme Switcher Engine
 - [ ] Phase 4: User Administration, Role Management Panel & Security Audit Logging
 - [ ] Phase 5: Plant Asset Hierarchy Tree & Detail Engine
@@ -58,11 +53,26 @@
 
 ---
 
-## 3. Living Development Log
+## 3. Registered User Roles (8 Roles)
+1. `Plant Operator` (username: `operator`)
+2. `Maintenance Engineer` (username: `maint_eng`)
+3. `Reliability Engineer` (username: `reliability_eng`)
+4. `Safety Officer` (username: `safety_officer`)
+5. `Production Engineer` (username: `prod_eng`)
+6. `Plant Manager` (username: `plant_mgr`)
+7. `Knowledge Admin` (username: `doc_admin`)
+8. `Admin` (username: `admin`)
 
-### Log Entry: 2026-07-19 — Enterprise DevOps & Quality Stack Integrated
-- Configured **Husky** and **lint-staged** in `.husky/pre-commit` and root `package.json`.
-- Configured **ESLint** (`.eslintrc.cjs`) and **Prettier** (`.prettierrc`) across the codebase.
-- Created **GitHub Actions Workflow** in `.github/workflows/ci.yml` to run automated build and lint checks on every git push.
-- Integrated **OpenAPI 3.0 (Swagger UI)** in `backend/src/config/swagger.js` and mounted at `http://localhost:5000/docs`.
-- Added **Docker Health Checks** (`healthcheck`) in `docker-compose.yml` for MongoDB, Express Gateway, FastAPI AI Service, and Nginx Frontend.
+Default Demo Password: `Password123!`
+
+---
+
+## 4. Living Development Log
+
+### Log Entry: 2026-07-19 — Phase 2 Authentication & RBAC System Complete
+- Implemented Mongoose `User` model (`backend/src/models/userModel.js`) with pre-save BCrypt hashing and `matchPassword` verification.
+- Built JWT Auth Middleware (`protect`) and Role Guard (`authorize`) in `backend/src/middleware/`.
+- Created Auth REST controller (`authController.js`) and routes (`authRoutes.js`) for `/login`, `/register`, `/me`, and `/seed`.
+- Created initial demo accounts seeder (`seedUsers.js`) covering all 8 plant roles.
+- Built Frontend `AuthContext.jsx`, `authService.js`, `ProtectedRoute.jsx`, `RoleGuard.jsx`, and `LoginPage.jsx` featuring demo role selector grid and dark industrial styling.
+- Phase 2 complete & committed to git.

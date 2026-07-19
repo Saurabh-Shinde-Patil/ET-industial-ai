@@ -7,14 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.0] - 2026-07-19
+
+### Completed Phase 2: Authentication & RBAC System
+- **Database & Schemas**: Created Mongoose `User` collection schema (`userModel.js`) with BCrypt password hashing pre-save hook and `matchPassword` method.
+- **Backend Auth API**: Built `/api/v1/auth/login`, `/api/v1/auth/register`, `/api/v1/auth/me`, and `/api/v1/auth/seed` endpoints.
+- **Middleware**: Built JWT Bearer token verification middleware (`authMiddleware.js`) and role-based authorization guard (`rbacMiddleware.js`).
+- **Seeder Utility**: Created `seedUsers.js` utility seeding 8 demo plant accounts (`operator`, `maint_eng`, `reliability_eng`, `safety_officer`, `prod_eng`, `plant_mgr`, `doc_admin`, `admin`).
+- **Frontend Auth Engine**: Created `AuthContext.jsx` for session persistence, `authService.js`, `ProtectedRoute.jsx`, and `RoleGuard.jsx`.
+- **Industrial Login UI**: Built `LoginPage.jsx` featuring responsive dark industrial layout, role selector grid for instant credential fill, and error alerts.
+
+---
+
 ## [1.5.0] - 2026-07-19
 
 ### Added
-- **Pre-commit Hooks**: Installed & configured Husky and `lint-staged` in `.husky/pre-commit` and `package.json`.
-- **Code Formatting & Linting**: Added `.eslintrc.cjs` and `.prettierrc` for root monorepo enforcement.
-- **GitHub Actions CI/CD Pipeline**: Created `.github/workflows/ci.yml` running automated build and syntax verification jobs on every git push or pull request to `main`/`develop`.
-- **OpenAPI (Swagger UI)**: Integrated `swagger-ui-express` and `swagger-jsdoc` in `backend/src/config/swagger.js` exposing interactive API documentation at `http://localhost:5000/docs`.
-- **Docker Health Checks**: Added native `healthcheck` declarations in `docker-compose.yml` for all 4 microservice containers (`mongo`, `backend`, `ai_service`, `frontend`).
+- Husky pre-commit hooks, ESLint + Prettier rules, GitHub Actions CI workflow (`.github/workflows/ci.yml`), OpenAPI (Swagger UI) at `/docs`, and Docker Health Checks.
 
 ---
 
@@ -22,13 +30,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Completed Phase 1 Technical Review
 - Audited 15 verification checkpoints. Passed 100%.
-- Created production Dockerfiles for `frontend`, `backend`, and `ai_service`.
 
 ---
 
 ## [1.3.0] - 2026-07-19
 
 ### Completed Phase 1: Project Setup & Environment Bootstrap
-- Bootstrapped React 18 SPA with Vite and Tailwind CSS.
-- Bootstrapped Express REST API gateway with Helmet and Winston logger.
-- Bootstrapped FastAPI microservice.
+- Bootstrapped React 18 SPA, Node Express API gateway, and Python FastAPI microservice.
