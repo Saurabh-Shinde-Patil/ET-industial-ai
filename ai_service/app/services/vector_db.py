@@ -123,7 +123,7 @@ class FAISSVectorManager:
         results = []
 
         if self.index is not None and self.index.ntotal > 0:
-            k = min(top_k * 3, self.index.ntotal) // Handle asset filtering space
+            k = min(top_k * 3, self.index.ntotal)  # Handle asset filtering space
             scores, indices = self.index.search(query_np, k)
 
             for score, idx in zip(scores[0], indices[0]):
@@ -139,7 +139,7 @@ class FAISSVectorManager:
                     continue
 
                 results.append({
-                    "score": round(sim_score * 100, 1), // percentage
+                    "score": round(sim_score * 100, 1),  # percentage
                     "similarity": round(sim_score, 4),
                     "chunkId": meta.get("chunkId"),
                     "documentId": meta.get("documentId"),
