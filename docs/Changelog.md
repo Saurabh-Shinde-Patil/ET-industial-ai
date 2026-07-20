@@ -7,14 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [10.0.0] - 2026-07-20
+
+### Completed Phase 10: Conversational RAG Engine with Citations & Confidence Meter
+- **RAG Synthesis Engine**: Created `rag_chain.py` with zero-hallucination industrial system prompt guardrails requiring strict ground-truth context adherence.
+- **Confidence Meter**: Implemented retrieval confidence score calculation (0-100%) and level categorization (`High Confidence`, `Medium Confidence`, `Suppressed / Low Confidence`).
+- **Citation Cards**: Built automatic source citation extraction including document title, version tag, and excerpt snippet.
+- **AI Microservice API**: Added `POST /chat` endpoint in `ai_service/app/api/chat.py`.
+- **Backend API Gateway & Audit**: Created `chatController.js` exposing `POST /api/v1/chat` and automatically logging ungrounded queries (< 60% confidence) to security audit logs for Knowledge Admin review.
+- **Frontend AI Assistant UI**: Built `ChatPage.jsx` conversational interface featuring plant asset context selector, message thread, confidence badges, and citation source cards.
+
+---
+
 ## [9.0.0] - 2026-07-20
 
 ### Completed Phase 9: FAISS Vector Database Engine & Indexing Manager
-- **Vector Database**: Created `vector_db.py` featuring `FAISSVectorManager` class using `faiss.IndexFlatIP` (384 dimensions) for sub-millisecond cosine similarity search.
-- **Disk Persistence**: Implemented binary index saving/loading at `ai_service/data/faiss_index.bin` and metadata mapping at `faiss_metadata.json`.
-- **AI Microservice API**: Added `POST /search/vector` and `POST /search/index` in `ai_service/app/api/search.py`.
-- **Backend API Gateway**: Added `POST /api/v1/search/vector` in `vectorController.js` and updated document vectorization pipeline to automatically index vector chunks into FAISS.
-- **Frontend Playground**: Built `VectorSearchPage.jsx` interactive vector search view with preset industrial queries, asset filtering, and percentage match scores.
+- Created `FAISSVectorManager` class (`vector_db.py`), disk persistence, `POST /search/vector` endpoint, and `VectorSearchPage.jsx`.
 
 ---
 
