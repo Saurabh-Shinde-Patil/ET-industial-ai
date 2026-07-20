@@ -85,3 +85,37 @@ export const chunkAndEmbedDocumentFromAI = async (documentId, text) => {
     throw error;
   }
 };
+
+/**
+ * Perform high-speed FAISS vector similarity search
+ */
+export const searchVectorDatabaseFromAI = async (query, topK = 5, assetId = null) => {
+  try {
+    const response = await axios.post(
+      `${AI_SERVICE_URL}/search/vector`,
+      {
+        query,
+        top_k: topK,
+        asset_id: assetId,
+      },
+      { timeout: 15000 }
+    );
+    return response.data;
+  } catch (error) {
+    logger.error(`FAISS Vector Search proxy failed: ${error.message}`);
+    throw error;
+  }
+};
+
+/**
+ * Index batch of vector chunks into FAISS vector database
+ */
+export const indexChunksInFAISS = async (chunks) => {
+  try {
+    const response = await axios.post(`${AI_SERVICE_URL}/search/index`, { chunks }, { timeout: 30000 });
+    return response.data;
+  } catch (error) {
+    logger.error(`FAISS Chunk Indexing proxy failed: ${error.message}`);
+    throw error;
+  }
+};

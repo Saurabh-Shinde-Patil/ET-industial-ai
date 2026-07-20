@@ -39,7 +39,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/audit-logs', auditRoutes);
 app.use('/api/v1/assets', assetRoutes);
-app.use('/api/v1/documents', vectorRoutes);
+app.use('/api/v1', vectorRoutes);
 app.use('/api/v1/documents', documentRoutes);
 
 /**
