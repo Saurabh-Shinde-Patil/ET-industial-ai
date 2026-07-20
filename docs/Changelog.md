@@ -7,11 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [15.0.0] - 2026-07-20
+
+### Completed Phase 15: Production Docker Containerization & Nginx Proxy Deployment (FINAL RELEASE)
+- **Containerization**: Built multi-stage production Dockerfiles for React 18 Vite frontend (`frontend/Dockerfile`), Node Express REST Gateway (`backend/Dockerfile`), and Python FastAPI AI microservice (`ai_service/Dockerfile`).
+- **Reverse Proxy**: Built central Nginx reverse proxy (`nginx/nginx.conf`) routing `/`, `/api/v1`, `/docs`, and `/ai/health`.
+- **Production Orchestration**: Created `docker-compose.prod.yml` managing container health checks, volume persistence (`mongodb_prod_data`, `ai_vector_data`, `uploaded_documents`), and automatic container restart policies.
+- **Verification Script**: Created PowerShell verification script `scripts/deploy-check.ps1` testing all 4 system health endpoints.
+
+---
+
 ## [14.0.0] - 2026-07-20
 
 ### Completed Phase 14: Industrial Analytics & Audit Dashboard
-- **Backend API Gateway**: Created `analyticsController.js` and `analyticsRoutes.js` exposing `GET /api/v1/analytics/summary` aggregating vector chunk counts, document types, search latency metrics, confidence distribution, and low-confidence audit logs.
-- **Frontend Analytics UI**: Built `AnalyticsPage.jsx` with Recharts AreaChart query volume curve, Donut Chart confidence distribution, BarChart document repository breakdown, and low-confidence knowledge gap audit table.
+- Created `analyticsController.js`, `analyticsRoutes.js`, `GET /api/v1/analytics/summary` endpoint, and `AnalyticsPage.jsx`.
 
 ---
 
