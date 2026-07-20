@@ -7,16 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.0.0] - 2026-07-20
+
+### Completed Phase 7: PyTesseract OCR & Scanned PDF Extraction Engine
+- **Text Extraction Engine**: Created `extractor.py` in Python FastAPI microservice supporting PDF (pdfplumber), Word (`python-docx`), plain text, and PyTesseract OCR fallback for scanned diagrams & low-density PDFs.
+- **Industrial Text Cleaner**: Created `cleaner.py` normalizing whitespace, removing OCR artifacts, and standardizing technical units (`m³/h`, `°C`, `bar`, `RPM`).
+- **AI Microservice API**: Added `POST /extract` endpoint in `ai_service/app/api/extract.py`.
+- **Backend Integration**: Updated `aiServiceProxy.js` and added `POST /api/v1/documents/:id/extract` in Express backend `documentController.js`.
+- **Extraction Modal**: Built `ExtractionModal.jsx` displaying extracted text preview, word counts, and PyTesseract status.
+- **Document Catalog**: Integrated interactive `OCR` button into `DocumentsPage.jsx`.
+
+---
+
 ## [6.0.0] - 2026-07-20
 
 ### Completed Phase 6: Document Management System & Asset Association Pipeline
-- **Database & Schemas**: Created Mongoose `Document` collection schema (`documentModel.js`) with document type indices, file path, versioning, extraction status, and array of linked asset ObjectIds.
-- **File Upload Middleware**: Built `uploadMiddleware.js` using Multer for handling multi-format uploads (PDF, DOCX, TXT, PNG, JPG) up to 50MB with mime-type safety.
-- **Seeder Utility**: Built `seedDocuments.js` populating 5 ground-truth industrial plant documents (`SOP-PUMP-101`, `MAINT-BOILER-02`, `RCA-COMP-07`, `PM-TURBINE-04`, `MANUAL-REACTOR-05`).
-- **Backend Document REST API**: Added `POST /api/v1/documents/upload`, `GET /api/v1/documents`, `GET /api/v1/documents/:id`, `PUT /api/v1/documents/:id/link-assets`, `DELETE /api/v1/documents/:id`, and `POST /api/v1/documents/seed` endpoints.
-- **Frontend Services**: Built `documentService.js` client wrapper supporting multipart file uploads.
-- **Upload Modal**: Built `UploadModal.jsx` drag-and-drop file uploader with asset selection grid responding to Navbar upload triggers.
-- **Document Catalog Page**: Built `DocumentsPage.jsx` catalog repository table with document type filters, asset filters, extraction status pills (`Extracted`, `Pending`, `Failed`), and document deletion controls.
+- Created `Document` collection, Multer `uploadMiddleware.js`, 5-document seeder, `UploadModal.jsx`, and `DocumentsPage.jsx`.
 
 ---
 
