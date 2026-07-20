@@ -68,12 +68,13 @@ export const seedInitialUsers = async () => {
     });
 
     if (!user) {
-      user = await User.create(acc);
+      user = await User.create({ ...acc, isActive: true });
       created.push({ username: user.username, role: user.role, email: user.email, status: 'created' });
     } else {
-      // Ensure password hash & email are updated to standard demo credentials
+      // Ensure password hash, email, and active status are updated to standard demo credentials
       user.email = acc.email;
       user.passwordHash = acc.passwordHash;
+      user.isActive = true;
       await user.save();
       created.push({ username: user.username, role: user.role, email: user.email, status: 'updated' });
     }

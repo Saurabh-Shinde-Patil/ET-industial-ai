@@ -5,6 +5,7 @@ import logging
 
 from app.core.config import settings
 from app.api import health, extract, embed, search, chat, hybrid, pm, rca
+from app.services.embedder import get_embedding_model
 
 # Logging Setup
 logging.basicConfig(
@@ -38,6 +39,12 @@ app.include_router(chat.router)
 app.include_router(hybrid.router)
 app.include_router(pm.router)
 app.include_router(rca.router)
+
+@app.on_event("startup")
+async def startup_event():
+    logger.info("Pre-warming embedding model on startup (this may take a minute on first run)...")
+    get_embedding_model()
+    logger.info("Embedding model pre-warmed and ready!")
 
 @app.get("/")
 async def root():

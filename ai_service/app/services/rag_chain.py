@@ -32,10 +32,10 @@ def generate_industrial_rag_response(query: str, asset_id: str = None, top_k: in
     # 1. Generate 384-dimensional query embedding
     query_vector = generate_embedding(query)
 
-    # 2. Vector Similarity Search against FAISS database
-    matches = faiss_db.search(query_vector, top_k=top_k, asset_id=asset_id)
+    # 2. Vector & Keyword Similarity Search against FAISS database
+    matches = faiss_db.search(query_vector, top_k=top_k, asset_id=asset_id, query_text=query)
 
-    # If no vector matches found in FAISS index
+    # If no vector matches found in index
     if not matches:
         logger.info(f"No FAISS vector matches found for query: '{query}'")
         return {
@@ -45,7 +45,7 @@ def generate_industrial_rag_response(query: str, asset_id: str = None, top_k: in
             "citations": [],
         }
 
-    # 3. Calculate Confidence Score & Level based on top vector match
+    # 3. Calculate Confidence Score & Level based on top match
     top_score = matches[0]["score"] # percentage 0-100
     confidence_level = "High Confidence"
     if top_score < 60.0:
@@ -62,7 +62,7 @@ def generate_industrial_rag_response(query: str, asset_id: str = None, top_k: in
             "citations": [],
         }
 
-    # 4. Build Citations Array from retrieved FAISS matches
+    # 4. Build Citations Array from retrieved matches
     citations = []
     seen_docs = set()
     context_blocks = []
@@ -88,7 +88,7 @@ def generate_industrial_rag_response(query: str, asset_id: str = None, top_k: in
     # 5. Synthesize Ground-Truth Operational Response
     combined_context = "\n\n".join(context_blocks)
     
-    # Ground-truth answer synthesis based on retrieved context
+    # Ground-truth answer synthesis based on top matching context
     answer_text = _synthesize_answer(query, combined_context, matches)
 
     return {
