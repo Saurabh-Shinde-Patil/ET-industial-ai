@@ -140,3 +140,24 @@ export const generateRAGResponseFromAI = async (query, assetId = null, topK = 4)
     throw error;
   }
 };
+
+/**
+ * Call Python Reciprocal Rank Fusion (RRF) Hybrid Search Engine
+ */
+export const searchHybridDatabaseFromAI = async (query, topK = 10, assetId = null) => {
+  try {
+    const response = await axios.post(
+      `${AI_SERVICE_URL}/search/hybrid`,
+      {
+        query,
+        top_k: topK,
+        asset_id: assetId,
+      },
+      { timeout: 15000 }
+    );
+    return response.data;
+  } catch (error) {
+    logger.error(`Hybrid RRF Search proxy failed: ${error.message}`);
+    throw error;
+  }
+};

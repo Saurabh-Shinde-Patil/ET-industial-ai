@@ -14,6 +14,7 @@ import assetRoutes from './src/routes/assetRoutes.js';
 import documentRoutes from './src/routes/documentRoutes.js';
 import vectorRoutes from './src/routes/vectorRoutes.js';
 import chatRoutes from './src/routes/chatRoutes.js';
+import hybridSearchRoutes from './src/routes/hybridSearchRoutes.js';
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/audit-logs', auditRoutes);
 app.use('/api/v1/assets', assetRoutes);
 app.use('/api/v1/chat', chatRoutes);
+app.use('/api/v1', hybridSearchRoutes);
 app.use('/api/v1', vectorRoutes);
 app.use('/api/v1/documents', documentRoutes);
 

@@ -11,7 +11,7 @@ import AdminUsersPage from './pages/AdminUsersPage';
 import AssetsPage from './pages/AssetsPage';
 import AssetDetailPage from './pages/AssetDetailPage';
 import DocumentsPage from './pages/DocumentsPage';
-import VectorSearchPage from './pages/VectorSearchPage';
+import KnowledgeSearchPage from './pages/KnowledgeSearchPage';
 import ChatPage from './pages/ChatPage';
 
 export default function App() {
@@ -92,13 +92,13 @@ export default function App() {
               }
             />
 
-            {/* FAISS Vector Similarity Search Playground */}
+            {/* Hybrid Reciprocal Rank Fusion Search Playground */}
             <Route
               path="/search"
               element={
                 <ProtectedRoute>
                   <MainLayout>
-                    <VectorSearchPage />
+                    <KnowledgeSearchPage />
                   </MainLayout>
                 </ProtectedRoute>
               }
