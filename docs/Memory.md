@@ -9,14 +9,14 @@
 
 ## 1. Current Project Status
 
-- **Project Status**: Phase 3 Complete (`Main Layout & Dashboard Infrastructure`). Phase 4 (`User & Role Administration & Audit Logging`) ready to execute.
-- **Current Phase**: Phase 3 Completed / Phase 4 Ready
-- **Current Feature**: Main Layout Shell, Sidebar, Navbar, Theme Engine & Command Dashboard
+- **Project Status**: Phase 4 Complete (`User & Role Administration & Security Audit Logging`). Phase 5 (`Asset Hierarchy & Knowledge Graph`) ready to execute.
+- **Current Phase**: Phase 4 Completed / Phase 5 Ready
+- **Current Feature**: Admin User Directory, Role Assignment Modals & Security Audit Log Viewer
 - **Current File**: `docs/Memory.md`
-- **Current Sprint**: Sprint 3 (Application Shell & Dashboard UI)
+- **Current Sprint**: Sprint 4 (Admin & Security Control)
 - **Current Branch**: `main`
-- **Last Updated**: 2026-07-19
-- **Next Task**: Await approval to start Phase 4 (User & Role Administration & Security Audit Logging: Admin user table, permission editor, security audit log viewer).
+- **Last Updated**: 2026-07-20
+- **Next Task**: Await approval to start Phase 5 (Asset Hierarchy & Knowledge Graph: Mongoose Asset schema, parent-child tree queries, AssetTree component, Asset Detail view, technical specs editor).
 
 ---
 
@@ -36,9 +36,9 @@
 - [x] **DevOps Infrastructure**: Husky pre-commit hooks, ESLint/Prettier, GitHub Actions CI workflow, Swagger UI OpenAPI (`/docs`), Docker Health Checks.
 - [x] **Phase 2**: Authentication & RBAC System (Mongoose User schema with BCrypt password hashing, JWT authorization, Express auth/rbac middleware, 8 plant role seeder, AuthContext, ProtectedRoute, RoleGuard, industrial dark command center LoginPage UI).
 - [x] **Phase 3**: Main Layout & Dashboard Infrastructure (ThemeContext dark/light switcher, MainLayout application shell, responsive Sidebar with collapse & microservice status indicators, Navbar with Global Search shortcut & user badges, Command Center DashboardPage with 4 KPI cards, Recharts query activity curve, document catalog bar chart, and Low Confidence Query Audit Log table).
+- [x] **Phase 4**: User & Role Administration & Security Audit Logging (Mongoose AuditLog schema, auditLogger middleware, Admin user CRUD endpoints `GET/POST /api/v1/users`, `PUT /users/:id/role`, `PUT /users/:id/status`, `GET /api/v1/audit-logs`, userService, AdminUsersPage, UserModal, RoleModal, and AuditLogViewer).
 
-### Pending Implementation (Phases 4 - 15)
-- [ ] Phase 4: User Administration, Role Management Panel & Security Audit Logging
+### Pending Implementation (Phases 5 - 15)
 - [ ] Phase 5: Plant Asset Hierarchy Tree & Detail Engine
 - [ ] Phase 6: Document Management & Asset Association Pipeline
 - [ ] Phase 7: PyTesseract OCR & Scanned PDF Extraction Engine
@@ -55,11 +55,14 @@
 
 ## 3. Living Development Log
 
-### Log Entry: 2026-07-19 — Phase 3 Main Layout & Dashboard Infrastructure Complete
-- Created `ThemeContext.jsx` for dark/light theme switching with HTML attribute synchronization.
-- Built `Navbar.jsx` featuring branding, global search shortcut (`Ctrl + K`), upload trigger, theme toggle, and user role display.
-- Built `Sidebar.jsx` with responsive collapse mode (64px vs 260px) and live microservice status indicators (`API Gateway`, `Vector Engine`).
-- Created `MainLayout.jsx` wrapping application pages cleanly.
-- Built `DashboardPage.jsx` featuring 4 KPI cards, Recharts AreaChart (query activity), BarChart (document catalog), and Low-Confidence Query Audit Log table.
-- Added `PUT /api/v1/users/preferences` endpoint in `userController.js` and `userRoutes.js`.
-- Phase 3 complete & committed to git.
+### Log Entry: 2026-07-20 — Phase 4 User & Role Administration Complete
+- Created `backend/src/models/auditLogModel.js` schema for immutable security event tracking.
+- Created `backend/src/middleware/auditLogger.js` helper module.
+- Expanded `userController.js` with `getUsers`, `createUser`, `updateUserRole`, `toggleUserStatus`.
+- Created `auditController.js` and `auditRoutes.js` for `GET /api/v1/audit-logs`.
+- Built `frontend/src/services/userService.js` client wrapper.
+- Built `UserModal.jsx` (create personnel) and `RoleModal.jsx` (modify RBAC role).
+- Built `AuditLogViewer.jsx` rendering system security audit trail events.
+- Built `AdminUsersPage.jsx` with tabs for Personnel Directory and Security Audit Trail.
+- Registered `/admin` route in `App.jsx` protected by `RoleGuard` (`Admin`, `Knowledge Admin`).
+- Phase 4 complete & committed to git.
