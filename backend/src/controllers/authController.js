@@ -34,18 +34,28 @@ export const loginUser = async (req, res, next) => {
       });
     }
 
-    // Support login via either email or username
+    const inputLower = email.trim().toLowerCase();
+    const inputUsername = inputLower.replace('@plant.com', '');
+
+    // Check if database needs initial seeding
+    const totalUsers = await User.countDocuments();
+    if (totalUsers === 0) {
+      await seedInitialUsers();
+    }
+
+    // Support login via email, full username, or short username without @plant.com
     const user = await User.findOne({
       $or: [
-        { email: email.toLowerCase() },
-        { username: email.toLowerCase() },
+        { email: inputLower },
+        { username: inputLower },
+        { username: inputUsername },
       ],
     });
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials. User not found.',
+        message: `Invalid credentials. User '${email}' not found. Please click 'Seed Demo DB Accounts' or use standard demo accounts (Password123!).`,
         error: 'InvalidCredentialsError',
       });
     }
@@ -71,7 +81,6 @@ export const loginUser = async (req, res, next) => {
 
     logger.info(`Successful login: User ${user.username} (${user.role})`);
     
-    // Asynchronously log audit event
     logAuditEvent(user._id, 'AUTH_LOGIN', `User '${user.username}' signed in with role '${user.role}'`, req.ip);
 
     res.status(200).json({

@@ -7,6 +7,7 @@ import { connectDB } from './src/config/db.js';
 import logger from './src/config/logger.js';
 import { checkAIServiceHealth } from './src/services/aiServiceProxy.js';
 import { setupSwagger } from './src/config/swagger.js';
+import { seedInitialUsers } from './src/utils/seedUsers.js';
 import authRoutes from './src/routes/authRoutes.js';
 import userRoutes from './src/routes/userRoutes.js';
 import auditRoutes from './src/routes/auditRoutes.js';
@@ -33,8 +34,14 @@ app.use(express.urlencoded({ extended: true }));
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB & Seed Default Accounts
+connectDB().then(async () => {
+  try {
+    await seedInitialUsers();
+  } catch (err) {
+    logger.warn(`Auto-seeding users warning: ${err.message}`);
+  }
+});
 
 // Mount OpenAPI Swagger UI Documentation
 setupSwagger(app);
