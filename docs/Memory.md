@@ -9,14 +9,14 @@
 
 ## 1. Current Project Status
 
-- **Project Status**: Phase 8 Complete (`Text Chunking & SentenceTransformers Vector Embedding Pipeline`). Phase 9 (`FAISS Vector Database Engine & Indexing Manager`) ready to execute.
-- **Current Phase**: Phase 8 Completed / Phase 9 Ready
-- **Current Feature**: Sliding Window Chunker, SentenceTransformers `all-MiniLM-L6-v2` (384-dim), Chunk Model & VectorizeModal UI
+- **Project Status**: Phase 9 Complete (`FAISS Vector Database Engine & Indexing Manager`). Phase 10 (`Conversational RAG Engine with Citations & Confidence Meter`) ready to execute.
+- **Current Phase**: Phase 9 Completed / Phase 10 Ready
+- **Current Feature**: FAISS Vector Index Manager (Inner Product / Cosine), Disk Index Persistence, `/search/vector` Endpoint & VectorSearchPage
 - **Current File**: `docs/Memory.md`
-- **Current Sprint**: Sprint 8 (Vector Embeddings & Chunking Infrastructure)
+- **Current Sprint**: Sprint 9 (FAISS Similarity Search Engine)
 - **Current Branch**: `main`
 - **Last Updated**: 2026-07-20
-- **Next Task**: Await approval to start Phase 9 (FAISS Vector Database Engine & Indexing Manager: FAISS L2/Cosine index manager in Python, index persistence on disk, similarity search endpoint `/vector-search`, top-k document retrieval).
+- **Next Task**: Await approval to start Phase 10 (Conversational RAG Engine with Citations & Confidence Meter: LangChain QA RAG pipeline, zero-hallucination prompt guardrails, citations with page/section numbers, similarity threshold meter, ChatPage UI).
 
 ---
 
@@ -41,9 +41,9 @@
 - [x] **Phase 6**: Document Management System & Asset Association Pipeline (Mongoose Document schema, Multer uploadMiddleware for 50MB PDF/DOCX/TXT/PNG/JPG files, 5 ground-truth document seeder `seedDocuments.js`, document REST endpoints `POST /documents/upload`, `GET /documents`, `GET /documents/:id`, `PUT /documents/:id/link-assets`, `DELETE /documents/:id`, documentService, UploadModal drag-and-drop uploader with asset selector, and DocumentsPage catalog table).
 - [x] **Phase 7**: PyTesseract OCR & Scanned PDF Extraction Engine (Python FastAPI `/extract` endpoint in `extract.py`, multi-format file parser `extractor.py`, PyTesseract OCR fallback for scanned schematics, industrial text cleaner `cleaner.py`, Express backend `aiServiceProxy` integration, `POST /api/v1/documents/:id/extract` endpoint, `ExtractionModal.jsx` output viewer, and OCR action button on `DocumentsPage.jsx`).
 - [x] **Phase 8**: Text Chunking & SentenceTransformers Vector Embedding Pipeline (Mongoose Chunk schema, `chunker.py` sliding window text splitter with heading & safety alert preservation, `embedder.py` SentenceTransformers `all-MiniLM-L6-v2` 384-dim embedding generator, FastAPI `/embed` and `/embed/chunk` endpoints, `vectorController.js` and `vectorRoutes.js` `POST /api/v1/documents/:id/vectorize`, and `VectorizeModal.jsx` pipeline viewer).
+- [x] **Phase 9**: FAISS Vector Database Engine & Indexing Manager (Python `FAISSVectorManager` class utilizing `IndexFlatIP` for inner product / cosine similarity, disk persistence `faiss_index.bin` & `faiss_metadata.json`, FastAPI `/search/vector` and `/search/index` endpoints, Express `searchVectorIndex` controller, `searchService.js`, and interactive `VectorSearchPage.jsx` playground).
 
-### Pending Implementation (Phases 9 - 15)
-- [ ] Phase 9: FAISS / ChromaDB Vector Database & Storage Manager
+### Pending Implementation (Phases 10 - 15)
 - [ ] Phase 10: Conversational RAG Engine with Citations & Confidence Meter
 - [ ] Phase 11: Hybrid Reciprocal Rank Fusion Search Interface
 - [ ] Phase 12: AI Preventive Maintenance Recommendation Engine
@@ -55,15 +55,13 @@
 
 ## 3. Living Development Log
 
-### Log Entry: 2026-07-20 — Phase 8 Text Chunking & Vector Embedding Pipeline Complete
-- Created `backend/src/models/chunkModel.js` schema for storing 384-dimensional vector embeddings, token counts, and metadata.
-- Created `ai_service/app/services/chunker.py` sliding window recursive chunker (target size: 500 chars, overlap: 100 chars).
-- Created `ai_service/app/services/embedder.py` SentenceTransformers `all-MiniLM-L6-v2` dense vector embedding generator.
-- Created `ai_service/app/api/embed.py` exposing `POST /embed` and `POST /embed/chunk`.
-- Updated `ai_service/main.py` mounting embed router.
-- Updated `backend/src/services/aiServiceProxy.js` with `generateEmbeddingFromAI` and `chunkAndEmbedDocumentFromAI`.
-- Created `backend/src/controllers/vectorController.js` and `vectorRoutes.js` exposing `POST /api/v1/documents/:id/vectorize` and `GET /api/v1/documents/:id/chunks`.
-- Updated `frontend/src/services/documentService.js` with `vectorizeDocument` and `getDocumentChunks`.
-- Built `VectorizeModal.jsx` displaying pipeline output, chunk list preview, and token count.
-- Integrated `Vectorize` action button into `DocumentsPage.jsx`.
-- Code pushed to GitHub (`990906a`). Phase 8 complete.
+### Log Entry: 2026-07-20 — Phase 9 FAISS Vector Database Engine Complete
+- Created `ai_service/app/services/vector_db.py` FAISS Vector Index Manager (384-dim `IndexFlatIP`) with disk persistence (`faiss_index.bin` and `faiss_metadata.json`).
+- Created `ai_service/app/api/search.py` exposing `POST /search/vector` and `POST /search/index`.
+- Updated `ai_service/main.py` mounting search router.
+- Updated `backend/src/services/aiServiceProxy.js` with `searchVectorDatabaseFromAI` and `indexChunksInFAISS`.
+- Updated `vectorController.js` and `vectorRoutes.js` exposing `POST /api/v1/search/vector` and auto-indexing chunked documents into FAISS.
+- Created `frontend/src/services/searchService.js` client wrapper.
+- Built `VectorSearchPage.jsx` semantic vector search playground with preset queries, asset filter, and similarity percentage match badges.
+- Registered `/search` route in `App.jsx`.
+- Code pushed to GitHub (`2e597e1`). Phase 9 complete.

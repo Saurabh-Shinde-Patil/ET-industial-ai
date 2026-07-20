@@ -7,16 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [9.0.0] - 2026-07-20
+
+### Completed Phase 9: FAISS Vector Database Engine & Indexing Manager
+- **Vector Database**: Created `vector_db.py` featuring `FAISSVectorManager` class using `faiss.IndexFlatIP` (384 dimensions) for sub-millisecond cosine similarity search.
+- **Disk Persistence**: Implemented binary index saving/loading at `ai_service/data/faiss_index.bin` and metadata mapping at `faiss_metadata.json`.
+- **AI Microservice API**: Added `POST /search/vector` and `POST /search/index` in `ai_service/app/api/search.py`.
+- **Backend API Gateway**: Added `POST /api/v1/search/vector` in `vectorController.js` and updated document vectorization pipeline to automatically index vector chunks into FAISS.
+- **Frontend Playground**: Built `VectorSearchPage.jsx` interactive vector search view with preset industrial queries, asset filtering, and percentage match scores.
+
+---
+
 ## [8.0.0] - 2026-07-20
 
 ### Completed Phase 8: Text Chunking & SentenceTransformers Vector Embedding Pipeline
-- **Database & Schemas**: Created Mongoose `Chunk` collection schema (`chunkModel.js`) storing 384-dimensional vector embeddings, chunk indices, token counts, asset references, and metadata.
-- **Text Chunker**: Created `chunker.py` sliding-window recursive text splitter (target size 500 chars, overlap 100 chars) preserving section headings and safety alerts (`DANGER`, `WARNING`, `NOTE`).
-- **Vector Embeddings**: Created `embedder.py` SentenceTransformers `all-MiniLM-L6-v2` dense vector model generating 384-dim normalized float vectors.
-- **AI Microservice API**: Added `POST /embed` and `POST /embed/chunk` endpoints in `ai_service/app/api/embed.py`.
-- **Backend Vector Controller**: Created `vectorController.js` and `vectorRoutes.js` exposing `POST /api/v1/documents/:id/vectorize` and `GET /api/v1/documents/:id/chunks`.
-- **Pipeline Viewer**: Built `VectorizeModal.jsx` displaying vector chunk counts, dimension status, and text chunk list preview.
-- **Document Catalog**: Integrated interactive `Vectorize` button into `DocumentsPage.jsx`.
+- Created `Chunk` collection, `chunker.py` sliding window text splitter, `embedder.py` SentenceTransformers `all-MiniLM-L6-v2` generator, `/embed` and `/embed/chunk` endpoints, and `VectorizeModal.jsx`.
 
 ---
 
