@@ -4,6 +4,7 @@ import path from 'path';
 import logger from '../config/logger.js';
 import { seedInitialDocuments } from '../utils/seedDocuments.js';
 import { logAuditEvent } from '../middleware/auditLogger.js';
+import { extractDocumentTextFromAI } from '../services/aiServiceProxy.js';
 
 /**
  * @desc    Upload new industrial document & link to plant assets
@@ -23,7 +24,6 @@ export const uploadDocument = async (req, res, next) => {
     const { title, documentType, linkedAssetIds, version, isOCR } = req.body;
 
     if (!title || !documentType) {
-      // Remove uploaded temp file on validation error
       if (fs.existsSync(req.file.path)) {
         fs.unlinkSync(req.file.path);
       }
@@ -34,7 +34,6 @@ export const uploadDocument = async (req, res, next) => {
       });
     }
 
-    // Determine extension fileType
     const ext = path.extname(req.file.originalname).toLowerCase();
     let fileType = 'PDF';
     if (ext === '.docx') fileType = 'DOCX';
@@ -42,7 +41,6 @@ export const uploadDocument = async (req, res, next) => {
     else if (ext === '.png') fileType = 'PNG';
     else if (ext === '.jpg' || ext === '.jpeg') fileType = 'JPG';
 
-    // Parse linked asset IDs if provided as string or array
     let assets = [];
     if (linkedAssetIds) {
       assets = typeof linkedAssetIds === 'string' ? JSON.parse(linkedAssetIds) : linkedAssetIds;
@@ -158,6 +156,61 @@ export const getDocumentById = async (req, res, next) => {
 };
 
 /**
+ * @desc    Trigger AI Microservice Text & OCR Extraction on document
+ * @route   POST /api/v1/documents/:id/extract
+ * @access  Private (Admin, Knowledge Admin, Maintenance Engineer)
+ */
+export const extractDocumentText = async (req, res, next) => {
+  try {
+    const document = await Document.findById(req.params.id);
+
+    if (!document) {
+      return res.status(404).json({
+        success: false,
+        message: 'Document record not found',
+        error: 'NotFoundError',
+      });
+    }
+
+    // Call Python FastAPI AI Service /extract
+    let extractionResult;
+    try {
+      extractionResult = await extractDocumentTextFromAI(document.filePath);
+    } catch (aiErr) {
+      // Fallback if AI microservice is not reachable: use rawContent or basic text fallback
+      if (document.rawContent) {
+        extractionResult = {
+          text: document.rawContent,
+          is_ocr: document.isOCR || false,
+          word_count: document.rawContent.split(/\s+/).length,
+        };
+      } else {
+        throw new Error(`AI Extraction service unavailable: ${aiErr.message}`);
+      }
+    }
+
+    document.rawContent = extractionResult.text;
+    document.isOCR = extractionResult.is_ocr;
+    document.extractionStatus = 'Extracted';
+    document.chunkCount = Math.ceil((extractionResult.word_count || 100) / 250); // ~250 words per chunk
+
+    await document.save();
+
+    logger.info(`Successfully extracted text for document '${document.title}' (${document.chunkCount} chunks)`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Text & OCR extraction completed successfully',
+      document,
+      extractedSnippet: extractionResult.text.substring(0, 500),
+      wordCount: extractionResult.word_count,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * @desc    Update asset associations for document
  * @route   PUT /api/v1/documents/:id/link-assets
  * @access  Private (Admin, Knowledge Admin)
@@ -205,7 +258,6 @@ export const deleteDocument = async (req, res, next) => {
       });
     }
 
-    // Unlink physical file from disk if exists
     if (document.filePath && fs.existsSync(document.filePath)) {
       try {
         fs.unlinkSync(document.filePath);

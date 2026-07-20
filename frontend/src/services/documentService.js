@@ -18,6 +18,14 @@ export const documentService = {
   },
 
   /**
+   * Trigger AI PyTesseract OCR & text extraction
+   */
+  async extractDocumentText(id) {
+    const response = await apiClient.post(`/documents/${id}/extract`);
+    return response.data;
+  },
+
+  /**
    * Upload multi-format file with metadata & asset links
    */
   async uploadDocument(formData) {

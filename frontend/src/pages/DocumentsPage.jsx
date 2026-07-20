@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { documentService } from '../services/documentService';
 import { assetService } from '../services/assetService';
 import UploadModal from '../components/documents/UploadModal';
+import ExtractionModal from '../components/documents/ExtractionModal';
 import {
   FileText,
   UploadCloud,
@@ -13,19 +14,21 @@ import {
   Database,
   Cpu,
   Trash2,
-  Download,
+  Sparkles,
   Loader2,
-  FileCode,
 } from 'lucide-react';
 
 export default function DocumentsPage() {
   const [documents, setDocuments] = useState([]);
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [extractingId, setExtractingId] = useState(null);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [assetFilter, setAssetFilter] = useState('');
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isExtractionModalOpen, setIsExtractionModalOpen] = useState(false);
+  const [extractionResult, setExtractionResult] = useState(null);
   const [message, setMessage] = useState('');
 
   const fetchData = async () => {
@@ -62,6 +65,20 @@ export default function DocumentsPage() {
     }
   };
 
+  const handleExtractText = async (docId) => {
+    setExtractingId(docId);
+    try {
+      const res = await documentService.extractDocumentText(docId);
+      setExtractionResult(res);
+      setIsExtractionModalOpen(true);
+      fetchData();
+    } catch (err) {
+      console.error('Extraction failed:', err);
+    } finally {
+      setExtractingId(null);
+    }
+  };
+
   const handleDeleteDoc = async (id, title) => {
     if (window.confirm(`Are you sure you want to remove document '${title}'?`)) {
       try {
@@ -86,7 +103,7 @@ export default function DocumentsPage() {
       case 'Pending':
         return (
           <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-industrial-amber/15 text-industrial-amber border border-industrial-amber/30 inline-flex items-center gap-1">
-            <Clock className="w-3 h-3" /> Pending Vectorization
+            <Clock className="w-3 h-3" /> Pending OCR
           </span>
         );
       case 'Failed':
@@ -107,14 +124,14 @@ export default function DocumentsPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2.5 py-0.5 rounded-full bg-industrial-cyan/15 border border-industrial-cyan/40 text-industrial-cyan font-mono text-[11px]">
-              KNOWLEDGE REPOSITORY
+              KNOWLEDGE REPOSITORY & OCR ENGINE
             </span>
           </div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-industrial-textMain">
-            Document Catalog & Vector Ingestion Manager
+            Document Catalog & PyTesseract OCR Engine
           </h1>
           <p className="text-xs text-industrial-textSub mt-1 max-w-2xl">
-            Ingest, parse, and map SOPs, maintenance logs, RCA reports, and engineering manuals directly to plant machinery nodes.
+            Multi-format industrial text extraction, PyTesseract OCR for scanned schematics, noise cleaning, and asset linking.
           </p>
         </div>
 
@@ -203,7 +220,7 @@ export default function DocumentsPage() {
                 <th className="py-2.5 px-3">Document Title</th>
                 <th className="py-2.5 px-3">Type</th>
                 <th className="py-2.5 px-3">Linked Machinery Assets</th>
-                <th className="py-2.5 px-3">Vector Status</th>
+                <th className="py-2.5 px-3">Vector & OCR Status</th>
                 <th className="py-2.5 px-3">Size & Ver</th>
                 <th className="py-2.5 px-3 text-right">Actions</th>
               </tr>
@@ -249,6 +266,20 @@ export default function DocumentsPage() {
                   <td className="py-3.5 px-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button
+                        onClick={() => handleExtractText(doc._id)}
+                        disabled={extractingId === doc._id}
+                        className="px-2.5 py-1.5 rounded-lg bg-industrial-cyan/15 hover:bg-industrial-cyan/25 border border-industrial-cyan/40 text-industrial-cyan text-xs font-semibold flex items-center gap-1 transition-all disabled:opacity-50"
+                        title="Extract Text & OCR"
+                      >
+                        {extractingId === doc._id ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Sparkles className="w-3.5 h-3.5" />
+                        )}
+                        <span>OCR</span>
+                      </button>
+
+                      <button
                         onClick={() => handleDeleteDoc(doc._id, doc.title)}
                         className="p-1.5 rounded border bg-industrial-crimson/10 border-industrial-crimson/30 text-industrial-crimson hover:bg-industrial-crimson/20 transition-colors"
                         title="Delete Document"
@@ -264,11 +295,17 @@ export default function DocumentsPage() {
         </div>
       )}
 
-      {/* Upload Modal */}
+      {/* Modals */}
       <UploadModal
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
         onUploadSuccess={fetchData}
+      />
+
+      <ExtractionModal
+        isOpen={isExtractionModalOpen}
+        onClose={() => setIsExtractionModalOpen(false)}
+        result={extractionResult}
       />
     </div>
   );

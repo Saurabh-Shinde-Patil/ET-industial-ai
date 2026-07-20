@@ -3,6 +3,7 @@ import {
   uploadDocument,
   getDocuments,
   getDocumentById,
+  extractDocumentText,
   linkAssetsToDocument,
   deleteDocument,
   seedDocuments,
@@ -41,6 +42,15 @@ router.post('/upload', upload.single('file'), uploadDocument);
  *     tags: [Documents]
  */
 router.get('/', getDocuments);
+
+/**
+ * @openapi
+ * /api/v1/documents/{id}/extract:
+ *   post:
+ *     summary: Trigger PyTesseract OCR & Text extraction
+ *     tags: [Documents]
+ */
+router.post('/:id/extract', extractDocumentText);
 
 /**
  * @openapi
