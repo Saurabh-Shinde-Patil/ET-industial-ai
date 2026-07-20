@@ -7,15 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [11.0.0] - 2026-07-20
+
+### Completed Phase 11: Hybrid Reciprocal Rank Fusion Search Interface
+- **Hybrid RRF Algorithm**: Created `hybrid_search.py` implementing Reciprocal Rank Fusion ($1/(60+Rank_{BM25}) + 1/(60+Rank_{FAISS})$) combining sparse BM25 keyword matching and dense FAISS vector cosine similarity.
+- **AI Microservice API**: Added `POST /search/hybrid` endpoint in `ai_service/app/api/hybrid.py`.
+- **Backend API Gateway**: Created `hybridSearchController.js` and `hybridSearchRoutes.js` exposing `POST /api/v1/search/hybrid`.
+- **Frontend Search Page**: Built `KnowledgeSearchPage.jsx` providing search mode toggles (**Hybrid RRF**, **FAISS Vector Only**), BM25 rank tags, FAISS rank tags, and RRF score percentages.
+
+---
+
 ## [10.0.0] - 2026-07-20
 
 ### Completed Phase 10: Conversational RAG Engine with Citations & Confidence Meter
-- **RAG Synthesis Engine**: Created `rag_chain.py` with zero-hallucination industrial system prompt guardrails requiring strict ground-truth context adherence.
-- **Confidence Meter**: Implemented retrieval confidence score calculation (0-100%) and level categorization (`High Confidence`, `Medium Confidence`, `Suppressed / Low Confidence`).
-- **Citation Cards**: Built automatic source citation extraction including document title, version tag, and excerpt snippet.
-- **AI Microservice API**: Added `POST /chat` endpoint in `ai_service/app/api/chat.py`.
-- **Backend API Gateway & Audit**: Created `chatController.js` exposing `POST /api/v1/chat` and automatically logging ungrounded queries (< 60% confidence) to security audit logs for Knowledge Admin review.
-- **Frontend AI Assistant UI**: Built `ChatPage.jsx` conversational interface featuring plant asset context selector, message thread, confidence badges, and citation source cards.
+- Created `rag_chain.py` with zero-hallucination guardrails, `/chat` endpoint, `chatController.js` low-confidence audit logging, and `ChatPage.jsx`.
 
 ---
 
