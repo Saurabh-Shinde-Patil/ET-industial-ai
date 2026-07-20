@@ -9,14 +9,14 @@
 
 ## 1. Current Project Status
 
-- **Project Status**: Phase 5 Complete (`Asset Hierarchy & Knowledge Graph`). Phase 6 (`Document Management System`) ready to execute.
-- **Current Phase**: Phase 5 Completed / Phase 6 Ready
-- **Current Feature**: Plant Machinery Asset Graph, Hierarchical Tree Engine, Asset Detail Profiles & Specs Editor
+- **Project Status**: Phase 6 Complete (`Document Management System & Asset Association Pipeline`). Phase 7 (`PyTesseract OCR & Scanned PDF Extraction Engine`) ready to execute.
+- **Current Phase**: Phase 6 Completed / Phase 7 Ready
+- **Current Feature**: Document Ingestion Pipeline, Asset Association Linking, UploadModal & Document Catalog Repository
 - **Current File**: `docs/Memory.md`
-- **Current Sprint**: Sprint 5 (Asset Graph & Machinery Modeling)
+- **Current Sprint**: Sprint 6 (Document Repository & Storage Pipeline)
 - **Current Branch**: `main`
 - **Last Updated**: 2026-07-20
-- **Next Task**: Await approval to start Phase 6 (Document Management System: Multi-format uploader UI, Multer middleware, Document Mongoose schema, doc-to-asset linking, document catalog table).
+- **Next Task**: Await approval to start Phase 7 (PyTesseract OCR & Scanned PDF Extraction Engine: Python FastAPI OCR microservice endpoints, pdf2image conversion, Tesseract OCR for engineering schematics/scanned SOPs, text cleaning pipeline).
 
 ---
 
@@ -38,9 +38,9 @@
 - [x] **Phase 3**: Main Layout & Dashboard Infrastructure (ThemeContext dark/light switcher, MainLayout application shell, responsive Sidebar with collapse & microservice status indicators, Navbar with Global Search shortcut & user badges, Command Center DashboardPage with 4 KPI cards, Recharts query activity curve, document catalog bar chart, and Low Confidence Query Audit Log table).
 - [x] **Phase 4**: User & Role Administration & Security Audit Logging (Mongoose AuditLog schema, auditLogger middleware, Admin user CRUD endpoints `GET/POST /api/v1/users`, `PUT /users/:id/role`, `PUT /users/:id/status`, `GET /api/v1/audit-logs`, userService, AdminUsersPage, UserModal, RoleModal, and AuditLogViewer).
 - [x] **Phase 5**: Asset Hierarchy & Knowledge Graph (Mongoose Asset schema with self-referencing parentAssetId, 10 physical asset seeder utility `seedAssets.js`, asset REST endpoints `GET/POST /api/v1/assets`, `GET /assets/tree`, `GET /assets/:id`, assetService, interactive expandable AssetTree component, AssetModal form, AssetsPage split view, and AssetDetailPage).
+- [x] **Phase 6**: Document Management System & Asset Association Pipeline (Mongoose Document schema, Multer uploadMiddleware for 50MB PDF/DOCX/TXT/PNG/JPG files, 5 ground-truth document seeder `seedDocuments.js`, document REST endpoints `POST /documents/upload`, `GET /documents`, `GET /documents/:id`, `PUT /documents/:id/link-assets`, `DELETE /documents/:id`, documentService, UploadModal drag-and-drop uploader with asset selector, and DocumentsPage catalog table).
 
-### Pending Implementation (Phases 6 - 15)
-- [ ] Phase 6: Document Management System & Asset Association Pipeline
+### Pending Implementation (Phases 7 - 15)
 - [ ] Phase 7: PyTesseract OCR & Scanned PDF Extraction Engine
 - [ ] Phase 8: Text Chunking & SentenceTransformers Vector Embedding Pipeline
 - [ ] Phase 9: FAISS / ChromaDB Vector Database & Storage Manager
@@ -53,29 +53,24 @@
 
 ---
 
-## 3. Seeded Industrial Assets (10 Primary Machinery Nodes)
-1. `PUMP-101`: High-Pressure Main Feedwater Centrifugal Pump (Pumps)
-2. `BOILER-02`: High-Pressure Industrial Water-Tube Steam Boiler (Boilers)
-3. `VALVE-88`: Motor-Operated Steam Emergency Isolation Valve (Child of BOILER-02)
-4. `COMP-07`: Multi-Stage Heavy Industrial Screw Air Compressor (Compressors)
-5. `TURBINE-04`: Multi-Stage Condensing Steam Turbine Generator (Turbines)
-6. `HEX-12`: Shell & Tube Feedwater Pre-Heater Heat Exchanger (Heat Exchangers)
-7. `CONVEYOR-03`: Heavy-Duty Coal Handling Belt Conveyor (Conveyors)
-8. `XFRM-01`: Main Plant Step-Down Oil-Filled Power Transformer (Transformers)
-9. `REACTOR-05`: Jacketed Continuous Stirred Tank Chemical Reactor (Reactors)
-10. `CHILLER-09`: Industrial Centrifugal Water Chiller Unit (Chillers)
+## 3. Ground-Truth Documents Ingested
+1. `SOP-PUMP-101`: Main Feedwater Pump Cold Startup & Prime Sequence (Linked to PUMP-101)
+2. `MAINT-BOILER-02`: Annual Tube Inspection & Pressure Overhaul Report (Linked to BOILER-02)
+3. `RCA-COMP-07`: Root Cause Failure Analysis of Air Compressor Lube Oil Starvation (Linked to COMP-07)
+4. `PM-TURBINE-04`: 8000-Hour Steam Turbine Preventive Maintenance Schedule (Linked to TURBINE-04)
+5. `MANUAL-REACTOR-05`: Hastelloy Chemical Reactor Operating Specifications (Linked to REACTOR-05)
 
 ---
 
 ## 4. Living Development Log
 
-### Log Entry: 2026-07-20 — Phase 5 Asset Hierarchy & Knowledge Graph Complete
-- Created `backend/src/models/assetModel.js` schema with self-referencing `parentAssetId` and Virtual getter for `children`.
-- Created `backend/src/utils/seedAssets.js` seeding 10 physical industrial assets defined in `DemoData.md`.
-- Created `assetController.js` and `assetRoutes.js` supporting `GET /api/v1/assets/tree`, `GET /api/v1/assets`, `GET /api/v1/assets/:id`, `POST /api/v1/assets`, `PUT /api/v1/assets/:id`, `DELETE /api/v1/assets/:id`.
-- Created `frontend/src/services/assetService.js` client wrapper.
-- Built `AssetTree.jsx` component supporting recursive expansion and operational status pills.
-- Built `AssetModal.jsx` modal for registering asset nodes and managing key-value specs.
-- Built `AssetsPage.jsx` split view browser and `AssetDetailPage.jsx` profile page.
-- Registered `/assets` and `/assets/:id` routes in `App.jsx`.
-- Phase 5 complete & committed to git.
+### Log Entry: 2026-07-20 — Phase 6 Document Management System Complete
+- Created `backend/src/models/documentModel.js` schema capturing file metadata, document type, version, extraction status, and array of linked asset ObjectIds.
+- Created `backend/src/middleware/uploadMiddleware.js` configuring Multer disk storage and file type validation (PDF, DOCX, TXT, PNG, JPG).
+- Created `backend/src/utils/seedDocuments.js` populating 5 ground-truth plant documents mapped to physical assets.
+- Created `documentController.js` and `documentRoutes.js` supporting `POST /api/v1/documents/upload`, `GET /api/v1/documents`, `GET /api/v1/documents/:id`, `PUT /api/v1/documents/:id/link-assets`, `DELETE /api/v1/documents/:id`.
+- Created `frontend/src/services/documentService.js` client wrapper.
+- Built `UploadModal.jsx` drag-and-drop document upload modal responding to global `open-upload-modal` event.
+- Built `DocumentsPage.jsx` catalog repository table with document type filters, linked asset filters, version tags, and extraction status pills.
+- Registered `/documents` route in `App.jsx`.
+- Code pushed to GitHub (`f6e07f4`). Phase 6 complete.

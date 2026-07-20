@@ -7,16 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.0.0] - 2026-07-20
+
+### Completed Phase 6: Document Management System & Asset Association Pipeline
+- **Database & Schemas**: Created Mongoose `Document` collection schema (`documentModel.js`) with document type indices, file path, versioning, extraction status, and array of linked asset ObjectIds.
+- **File Upload Middleware**: Built `uploadMiddleware.js` using Multer for handling multi-format uploads (PDF, DOCX, TXT, PNG, JPG) up to 50MB with mime-type safety.
+- **Seeder Utility**: Built `seedDocuments.js` populating 5 ground-truth industrial plant documents (`SOP-PUMP-101`, `MAINT-BOILER-02`, `RCA-COMP-07`, `PM-TURBINE-04`, `MANUAL-REACTOR-05`).
+- **Backend Document REST API**: Added `POST /api/v1/documents/upload`, `GET /api/v1/documents`, `GET /api/v1/documents/:id`, `PUT /api/v1/documents/:id/link-assets`, `DELETE /api/v1/documents/:id`, and `POST /api/v1/documents/seed` endpoints.
+- **Frontend Services**: Built `documentService.js` client wrapper supporting multipart file uploads.
+- **Upload Modal**: Built `UploadModal.jsx` drag-and-drop file uploader with asset selection grid responding to Navbar upload triggers.
+- **Document Catalog Page**: Built `DocumentsPage.jsx` catalog repository table with document type filters, asset filters, extraction status pills (`Extracted`, `Pending`, `Failed`), and document deletion controls.
+
+---
+
 ## [5.0.0] - 2026-07-20
 
 ### Completed Phase 5: Asset Hierarchy & Knowledge Graph
-- **Database & Schemas**: Created Mongoose `Asset` collection schema (`assetModel.js`) supporting self-referencing `parentAssetId`, category indices, status flags, and key-value specifications maps.
-- **Seeder Utility**: Built `seedAssets.js` populating 10 primary industrial machinery nodes (`PUMP-101`, `BOILER-02`, `TURBINE-04`, `COMP-07`, `HEX-12`, `VALVE-88`, etc.) into MongoDB.
-- **Backend Asset REST API**: Added `GET /api/v1/assets/tree`, `GET /api/v1/assets`, `GET /api/v1/assets/:id`, `POST /api/v1/assets`, `PUT /api/v1/assets/:id`, `DELETE /api/v1/assets/:id`, and `POST /api/v1/assets/seed` endpoints.
-- **Frontend Services**: Built `assetService.js` client wrapper.
-- **Interactive Tree Component**: Built `AssetTree.jsx` enabling expandable/collapsible plant tree traversal with operational status badges.
-- **Asset Registration Modal**: Built `AssetModal.jsx` featuring dynamic key-value specification fields.
-- **Asset Pages**: Built `AssetsPage.jsx` split view and `AssetDetailPage.jsx` technical profile view.
+- Created `Asset` collection, 10-asset seeder, `AssetTree.jsx`, `AssetModal.jsx`, `AssetsPage.jsx`, and `AssetDetailPage.jsx`.
 
 ---
 
