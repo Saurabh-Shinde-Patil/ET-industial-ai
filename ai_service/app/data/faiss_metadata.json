@@ -1,0 +1,67 @@
+[
+  {
+    "chunkId": "6a5de2824ae11853b2a2d608",
+    "documentId": "6a5de2824ae11853b2a2d5f5",
+    "chunkIndex": 0,
+    "text": "STANDARD OPERATING PROCEDURE: MAIN FEEDWATER PUMP (PUMP-101) COLD STARTUP\n1. Purpose & Scope: Establish operational readiness for high-pressure feedwater supply.\n2. Pre-Check Protocol: Verify lube oil reservoir level (>75%), mechanical seal flush flow (Plan 53A accumulator pressure at 4.2 bar), suction valve MOV-101 fully open.\n3. Startup Steps: Engage auxiliary lube oil pump. Start main drive motor (350 kW) at minimum speed setting. Gradually open discharge valve MOV-102 over 90 seconds while monitoring vibration FFT spectra (<2.8 mm/s RMS).\n4. Trip Limits: Immediately shutdown if bearing drive end temp exceeds 85\u00b0C or seal flush delta pressure drops below 1.5 bar.",
+    "metadata": {
+      "title": "SOP-PUMP-101: Main Feedwater Pump Cold Startup & Prime Sequence",
+      "documentType": "SOP",
+      "version": "v2.1",
+      "isOCR": false
+    },
+    "linkedAssetIds": []
+  },
+  {
+    "chunkId": "6a5de2824ae11853b2a2d609",
+    "documentId": "6a5de2824ae11853b2a2d5f9",
+    "chunkIndex": 0,
+    "text": "ANNUAL MAINTENANCE OVERHAUL REPORT: BOILER-02 (50 T/h Water-Tube Steam Boiler)\nSummary: Hydrostatic test conducted at 63 bar (1.5x design rating). NDT ultrasonic thickness gauge identified minor wall thinning on superheater bank row 3 (minimum thickness 4.2 mm vs nominal 5.0 mm). Replaced safety relief valve SRV-201 gasket. Burner nozzle tips cleaned and recalibrated for 88.5% efficiency.",
+    "metadata": {
+      "title": "MAINT-BOILER-02: Annual Tube Inspection & Pressure Overhaul Report",
+      "documentType": "Maintenance Log",
+      "version": "v1.0",
+      "isOCR": false
+    },
+    "linkedAssetIds": []
+  },
+  {
+    "chunkId": "6a5de2824ae11853b2a2d60a",
+    "documentId": "6a5de2824ae11853b2a2d5fd",
+    "chunkIndex": 0,
+    "text": "INCIDENT ROOT CAUSE ANALYSIS REPORT (RCA-COMP-07-2026)\nEvent Date: June 14, 2026. Equipment: Multi-Stage Screw Air Compressor (COMP-07).\nFailure Description: High male screw bearing temperature trip (104\u00b0C).\nRoot Cause: Debris blockage in oil filter bypass valve resulting in starvation to drive bearings.\nCorrective Actions: Implemented 500-hour differential pressure transmitter inspections and upgraded lube filter mesh from 25 micron to 10 micron synthetic glass fibre.",
+    "metadata": {
+      "title": "RCA-COMP-07: Root Cause Failure Analysis of Air Compressor Lube Oil Starvation",
+      "documentType": "Root Cause Analysis",
+      "version": "v1.2",
+      "isOCR": true
+    },
+    "linkedAssetIds": []
+  },
+  {
+    "chunkId": "6a5de2824ae11853b2a2d60b",
+    "documentId": "6a5de2824ae11853b2a2d601",
+    "chunkIndex": 0,
+    "text": "PREVENTIVE MAINTENANCE SPECIFICATION: TURBINE-04 (12.5 MW Steam Turbine Generator)\nInterval: Every 8,000 Operating Hours.\nChecklist Items:\n1. Inspect governor control valve linear transducer calibration.\n2. Calibrate overspeed mechanical trip bolt test rig (Trip speed setting: 6600 RPM).\n3. Sample turbine oil for particle count (ISO 4406 Target: 15/13/10) and varnish potential index (VPI).",
+    "metadata": {
+      "title": "PM-TURBINE-04: 8000-Hour Steam Turbine Preventive Maintenance Schedule",
+      "documentType": "Preventive Maintenance",
+      "version": "v3.0",
+      "isOCR": false
+    },
+    "linkedAssetIds": []
+  },
+  {
+    "chunkId": "6a5de2824ae11853b2a2d60c",
+    "documentId": "6a5de2824ae11853b2a2d605",
+    "chunkIndex": 0,
+    "text": "VENDOR ENGINEERING MANUAL: REACTOR-05 (15,000L Jacketed CSTR)\nDesign Code: ASME Section VIII Div 1. Material: Hastelloy C-276 Clad Steel.\nOperating Limits: Max allowable working pressure (MAWP) 10 bar at 200\u00b0C. Jacket rating 6 bar steam. Agitator dual mechanical seal requires Plan 54 pressurized liquid barrier fluid maintained 2 bar above vessel internal pressure.",
+    "metadata": {
+      "title": "MANUAL-REACTOR-05: Hastelloy Chemical Reactor Operating Specifications",
+      "documentType": "Engineering Manual",
+      "version": "v1.0",
+      "isOCR": false
+    },
+    "linkedAssetIds": []
+  }
+]

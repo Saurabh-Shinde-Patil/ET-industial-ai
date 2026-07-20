@@ -1,7 +1,9 @@
 import Document from '../models/documentModel.js';
+import Chunk from '../models/chunkModel.js';
 import Asset from '../models/assetModel.js';
 import User from '../models/userModel.js';
 import logger from '../config/logger.js';
+import { indexChunksInFAISS } from '../services/aiServiceProxy.js';
 
 export const seedInitialDocuments = async () => {
   const adminUser = await User.findOne({ role: 'Admin' });
@@ -32,7 +34,7 @@ export const seedInitialDocuments = async () => {
       linkedAssetIds: pump101 ? [pump101._id] : [],
       version: 'v2.1',
       extractionStatus: 'Extracted',
-      chunkCount: 14,
+      chunkCount: 3,
       isOCR: false,
       rawContent: `STANDARD OPERATING PROCEDURE: MAIN FEEDWATER PUMP (PUMP-101) COLD STARTUP
 1. Purpose & Scope: Establish operational readiness for high-pressure feedwater supply.
@@ -51,7 +53,7 @@ export const seedInitialDocuments = async () => {
       linkedAssetIds: boiler02 ? [boiler02._id] : [],
       version: 'v1.0',
       extractionStatus: 'Extracted',
-      chunkCount: 28,
+      chunkCount: 3,
       isOCR: false,
       rawContent: `ANNUAL MAINTENANCE OVERHAUL REPORT: BOILER-02 (50 T/h Water-Tube Steam Boiler)
 Summary: Hydrostatic test conducted at 63 bar (1.5x design rating). NDT ultrasonic thickness gauge identified minor wall thinning on superheater bank row 3 (minimum thickness 4.2 mm vs nominal 5.0 mm). Replaced safety relief valve SRV-201 gasket. Burner nozzle tips cleaned and recalibrated for 88.5% efficiency.`,
@@ -67,7 +69,7 @@ Summary: Hydrostatic test conducted at 63 bar (1.5x design rating). NDT ultrason
       linkedAssetIds: comp07 ? [comp07._id] : [],
       version: 'v1.2',
       extractionStatus: 'Extracted',
-      chunkCount: 18,
+      chunkCount: 3,
       isOCR: true,
       rawContent: `INCIDENT ROOT CAUSE ANALYSIS REPORT (RCA-COMP-07-2026)
 Event Date: June 14, 2026. Equipment: Multi-Stage Screw Air Compressor (COMP-07).
@@ -86,7 +88,7 @@ Corrective Actions: Implemented 500-hour differential pressure transmitter inspe
       linkedAssetIds: turbine04 ? [turbine04._id] : [],
       version: 'v3.0',
       extractionStatus: 'Extracted',
-      chunkCount: 22,
+      chunkCount: 3,
       isOCR: false,
       rawContent: `PREVENTIVE MAINTENANCE SPECIFICATION: TURBINE-04 (12.5 MW Steam Turbine Generator)
 Interval: Every 8,000 Operating Hours.
@@ -106,7 +108,7 @@ Checklist Items:
       linkedAssetIds: reactor05 ? [reactor05._id] : [],
       version: 'v1.0',
       extractionStatus: 'Extracted',
-      chunkCount: 45,
+      chunkCount: 3,
       isOCR: false,
       rawContent: `VENDOR ENGINEERING MANUAL: REACTOR-05 (15,000L Jacketed CSTR)
 Design Code: ASME Section VIII Div 1. Material: Hastelloy C-276 Clad Steel.
@@ -114,17 +116,46 @@ Operating Limits: Max allowable working pressure (MAWP) 10 bar at 200°C. Jacket
     },
   ];
 
-  const created = [];
+  const createdDocs = [];
+  const chunkDocsToSave = [];
+
   for (const docData of sampleDocs) {
     let doc = await Document.findOne({ title: docData.title });
     if (!doc) {
       doc = await Document.create(docData);
-      created.push(doc);
-    } else {
-      created.push(doc);
+    }
+    createdDocs.push(doc);
+
+    // Check if chunks exist for this document
+    const existingChunks = await Chunk.countDocuments({ documentId: doc._id });
+    if (existingChunks === 0) {
+      const chunkText = doc.rawContent;
+      chunkDocsToSave.push({
+        documentId: doc._id,
+        chunkIndex: 0,
+        text: chunkText,
+        embedding: Array(384).fill(0.01),
+        tokenCount: chunkText.split(/\s+/).length,
+        linkedAssetIds: doc.linkedAssetIds,
+        metadata: {
+          title: doc.title,
+          documentType: doc.documentType,
+          version: doc.version,
+          isOCR: doc.isOCR,
+        },
+      });
     }
   }
 
-  logger.info(`Industrial Documents ready in database (${created.length} Ground-Truth Documents Mapped)`);
-  return created;
+  if (chunkDocsToSave.length > 0) {
+    const savedChunks = await Chunk.insertMany(chunkDocsToSave);
+    try {
+      await indexChunksInFAISS(savedChunks);
+    } catch (e) {
+      logger.warn(`Auto-seeding FAISS warning: ${e.message}`);
+    }
+  }
+
+  logger.info(`Industrial Documents and Vector Chunks ready in database (${createdDocs.length} Ground-Truth Documents Vectorized)`);
+  return createdDocs;
 };
