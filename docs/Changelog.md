@@ -7,15 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [13.0.0] - 2026-07-20
+
+### Completed Phase 13: Incident & Root Cause Analysis (RCA) Module
+- **Database & Schemas**: Created Mongoose `IncidentRCA` schema (`incidentRCAModel.js`) storing incident numbers, severity tags (`CRITICAL`, `HIGH`, `MEDIUM`), 5-Whys methodology step arrays, assigned corrective actions, and lifecycle status (`Under Investigation`, `RCA Completed`, `Actions Implemented`, `Closed`).
+- **Seeder Utility**: Built `seedIncidentRCAs.js` seeding initial 3 ground-truth plant outage RCAs (`INC-2026-COMP07`, `INC-2026-PUMP101`, `INC-2026-BOILER02`).
+- **AI 5-Whys Generator**: Created `rca_engine.py` generating structured 5-Whys methodological steps and preventative actions.
+- **AI Microservice API**: Added `POST /rca/generate-5whys` endpoint in `ai_service/app/api/rca.py`.
+- **Backend API Gateway**: Created `rcaController.js` and `rcaRoutes.js` exposing `GET/POST /api/v1/incidents`, `POST /:id/generate-rca`, `PUT /:id/status`, and `POST /seed`.
+- **Frontend RCA Workspace**: Built `IncidentRCAPage.jsx` featuring 4 KPI cards, expandable 5-Whys accordion traces, assigned corrective action trackers, and lifecycle status buttons.
+
+---
+
 ## [12.0.0] - 2026-07-20
 
 ### Completed Phase 12: AI Preventive Maintenance Recommendation Engine
-- **Database & Schemas**: Created Mongoose `PMRecommendation` schema (`pmRecommendationModel.js`) storing equipment risk scores (0-100%), priority tags (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`), action checklists, suggested parts, and job statuses (`Active`, `Scheduled`, `Completed`).
-- **Seeder Utility**: Built `seedPMRecommendations.js` seeding initial 5 ground-truth machinery PM overhaul schedules (`PUMP-101`, `BOILER-02`, `COMP-07`, `TURBINE-04`, `REACTOR-05`).
-- **Predictive Risk AI**: Created `pm_engine.py` calculating predictive failure risk percentages and generating PM action items.
-- **AI Microservice API**: Added `POST /pm/analyze` endpoint in `ai_service/app/api/pm.py`.
-- **Backend API Gateway**: Created `pmController.js` and `pmRoutes.js` exposing `GET/POST /api/v1/pm-recommendations`, `POST /analyze/:assetId`, `PUT /:id/status`, and `POST /seed`.
-- **Frontend PM Command Center**: Built `PMRecommendationsPage.jsx` featuring 4 KPI cards, risk score progress bars, action item checklists, and status update buttons.
+- Created `PMRecommendation` model, `seedPMRecommendations.js`, `pm_engine.py`, `POST /pm/analyze` endpoint, and `PMRecommendationsPage.jsx`.
 
 ---
 
