@@ -13,6 +13,7 @@ import AssetDetailPage from './pages/AssetDetailPage';
 import DocumentsPage from './pages/DocumentsPage';
 import KnowledgeSearchPage from './pages/KnowledgeSearchPage';
 import ChatPage from './pages/ChatPage';
+import PMRecommendationsPage from './pages/PMRecommendationsPage';
 
 export default function App() {
   return (
@@ -99,6 +100,18 @@ export default function App() {
                 <ProtectedRoute>
                   <MainLayout>
                     <KnowledgeSearchPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* AI Preventive Maintenance Recommendation Engine */}
+            <Route
+              path="/pm"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <PMRecommendationsPage />
                   </MainLayout>
                 </ProtectedRoute>
               }

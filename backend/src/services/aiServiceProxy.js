@@ -161,3 +161,23 @@ export const searchHybridDatabaseFromAI = async (query, topK = 10, assetId = nul
     throw error;
   }
 };
+
+/**
+ * Call Python AI Predictive Maintenance Engine
+ */
+export const analyzePMRiskFromAI = async (assetCode, category = 'General') => {
+  try {
+    const response = await axios.post(
+      `${AI_SERVICE_URL}/pm/analyze`,
+      {
+        asset_code: assetCode,
+        category,
+      },
+      { timeout: 10000 }
+    );
+    return response.data;
+  } catch (error) {
+    logger.error(`AI PM Risk analysis proxy failed: ${error.message}`);
+    throw error;
+  }
+};
