@@ -181,3 +181,24 @@ export const analyzePMRiskFromAI = async (assetCode, category = 'General') => {
     throw error;
   }
 };
+
+/**
+ * Call Python AI 5-Whys Root Cause Analysis Engine
+ */
+export const generate5WhysRCAFromAI = async (title, symptom, assetCode = 'PUMP-101') => {
+  try {
+    const response = await axios.post(
+      `${AI_SERVICE_URL}/rca/generate-5whys`,
+      {
+        title,
+        symptom,
+        asset_code: assetCode,
+      },
+      { timeout: 15000 }
+    );
+    return response.data;
+  } catch (error) {
+    logger.error(`AI 5-Whys RCA proxy failed: ${error.message}`);
+    throw error;
+  }
+};

@@ -14,6 +14,7 @@ import DocumentsPage from './pages/DocumentsPage';
 import KnowledgeSearchPage from './pages/KnowledgeSearchPage';
 import ChatPage from './pages/ChatPage';
 import PMRecommendationsPage from './pages/PMRecommendationsPage';
+import IncidentRCAPage from './pages/IncidentRCAPage';
 
 export default function App() {
   return (
@@ -112,6 +113,18 @@ export default function App() {
                 <ProtectedRoute>
                   <MainLayout>
                     <PMRecommendationsPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Incident & Root Cause Analysis (RCA) Workspace */}
+            <Route
+              path="/incidents"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <IncidentRCAPage />
                   </MainLayout>
                 </ProtectedRoute>
               }
