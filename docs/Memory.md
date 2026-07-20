@@ -9,14 +9,14 @@
 
 ## 1. Current Project Status
 
-- **Project Status**: Phase 11 Complete (`Hybrid Reciprocal Rank Fusion Search Interface`). Phase 12 (`AI Preventive Maintenance Recommendation Engine`) ready to execute.
-- **Current Phase**: Phase 11 Completed / Phase 12 Ready
-- **Current Feature**: Hybrid RRF Algorithm (BM25 Keyword + FAISS Vector), `/search/hybrid` Endpoint & KnowledgeSearchPage
+- **Project Status**: Phase 12 Complete (`AI Preventive Maintenance Recommendation Engine`). Phase 13 (`Incident & Root Cause Analysis (RCA) Module`) ready to execute.
+- **Current Phase**: Phase 12 Completed / Phase 13 Ready
+- **Current Feature**: Predictive Risk Score Engine, PMRecommendation Mongoose Schema, `/pm/analyze` Endpoint & PMRecommendationsPage UI
 - **Current File**: `docs/Memory.md`
-- **Current Sprint**: Sprint 11 (Hybrid RRF Search Infrastructure)
+- **Current Sprint**: Sprint 12 (AI Preventive Maintenance Infrastructure)
 - **Current Branch**: `main`
 - **Last Updated**: 2026-07-20
-- **Next Task**: Await approval to start Phase 12 (AI Preventive Maintenance Recommendation Engine: Time-to-failure risk score calculator, PM schedule recommendations based on historical overhaul logs, PMRecommendationsPage UI).
+- **Next Task**: Await approval to start Phase 13 (Incident & Root Cause Analysis (RCA) Module: Incident report schema, 5 Whys RCA generator, corrective action tracker, IncidentRCAPage UI).
 
 ---
 
@@ -44,9 +44,9 @@
 - [x] **Phase 9**: FAISS Vector Database Engine & Indexing Manager (Python `FAISSVectorManager` class utilizing `IndexFlatIP` for inner product / cosine similarity, disk persistence `faiss_index.bin` & `faiss_metadata.json`, FastAPI `/search/vector` and `/search/index` endpoints, Express `searchVectorIndex` controller, `searchService.js`, and interactive `VectorSearchPage.jsx` playground).
 - [x] **Phase 10**: Conversational RAG Engine with Citations & Confidence Meter (LangChain RAG synthesis module `rag_chain.py` with zero-hallucination system prompt, FastAPI `/chat` endpoint, Express `chatController.js` with low-confidence query audit logging, `chatService.js`, and `ChatPage.jsx` assistant UI with asset context dropdown, confidence badges, and citation source cards).
 - [x] **Phase 11**: Hybrid Reciprocal Rank Fusion Search Interface (Python RRF algorithm `hybrid_search.py` fusing BM25 keyword ranks + FAISS vector ranks, FastAPI `/search/hybrid` endpoint, Express `hybridSearchController.js`, `searchService.js`, and unified `KnowledgeSearchPage.jsx` UI with search mode toggles, BM25 rank pills, FAISS rank pills, and percentage RRF score badges).
+- [x] **Phase 12**: AI Preventive Maintenance Recommendation Engine (Mongoose `PMRecommendation` model, `seedPMRecommendations.js` populating 5 ground-truth overhauls, Python `pm_engine.py` predictive failure risk calculator, FastAPI `/pm/analyze` endpoint, Express `pmController.js` & `pmRoutes.js`, `pmService.js`, and `PMRecommendationsPage.jsx` UI with KPI cards, risk progress bars, action item checklists, and status updates).
 
-### Pending Implementation (Phases 12 - 15)
-- [ ] Phase 12: AI Preventive Maintenance Recommendation Engine
+### Pending Implementation (Phases 13 - 15)
 - [ ] Phase 13: Incident & Root Cause Analysis (RCA) Module
 - [ ] Phase 14: Industrial Analytics & Audit Dashboard
 - [ ] Phase 15: Production Docker Containerization & Nginx Proxy Deployment
@@ -55,13 +55,15 @@
 
 ## 3. Living Development Log
 
-### Log Entry: 2026-07-20 — Phase 11 Hybrid Reciprocal Rank Fusion Search Complete
-- Created `ai_service/app/services/hybrid_search.py` implementing Reciprocal Rank Fusion (RRF formula $1/(60+Rank_{BM25}) + 1/(60+Rank_{FAISS})$).
-- Created `ai_service/app/api/hybrid.py` exposing `POST /search/hybrid`.
-- Updated `ai_service/main.py` mounting hybrid router.
-- Updated `backend/src/services/aiServiceProxy.js` with `searchHybridDatabaseFromAI`.
-- Created `backend/src/controllers/hybridSearchController.js` and `hybridSearchRoutes.js` exposing `POST /api/v1/search/hybrid`.
-- Updated `frontend/src/services/searchService.js` with `searchHybridDatabase`.
-- Built `KnowledgeSearchPage.jsx` unified search interface featuring RRF rank badges, BM25 rank pills, FAISS rank pills, and search mode toggles.
-- Registered `/search` route in `App.jsx`.
-- Code pushed to GitHub (`465083c`). Phase 11 complete.
+### Log Entry: 2026-07-20 — Phase 12 AI Preventive Maintenance Engine Complete
+- Created `backend/src/models/pmRecommendationModel.js` schema for storing PM schedules, risk scores (0-100%), priority levels, action checklists, and suggested parts.
+- Created `backend/src/utils/seedPMRecommendations.js` populating 5 ground-truth machinery PM schedules.
+- Created `ai_service/app/services/pm_engine.py` predictive failure risk calculator.
+- Created `ai_service/app/api/pm.py` exposing `POST /pm/analyze`.
+- Updated `ai_service/main.py` mounting PM router.
+- Updated `backend/src/services/aiServiceProxy.js` with `analyzePMRiskFromAI`.
+- Created `backend/src/controllers/pmController.js` and `pmRoutes.js` exposing `GET/POST /api/v1/pm-recommendations`, `/analyze/:assetId`, `/status`, and `/seed`.
+- Created `frontend/src/services/pmService.js` client wrapper.
+- Built `PMRecommendationsPage.jsx` featuring 4 KPI cards, risk progress gauges, action item checklists, and job status buttons.
+- Registered `/pm` route in `App.jsx`.
+- Code pushed to GitHub (`0dcc148`). Phase 12 complete.

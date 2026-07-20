@@ -7,13 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [12.0.0] - 2026-07-20
+
+### Completed Phase 12: AI Preventive Maintenance Recommendation Engine
+- **Database & Schemas**: Created Mongoose `PMRecommendation` schema (`pmRecommendationModel.js`) storing equipment risk scores (0-100%), priority tags (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`), action checklists, suggested parts, and job statuses (`Active`, `Scheduled`, `Completed`).
+- **Seeder Utility**: Built `seedPMRecommendations.js` seeding initial 5 ground-truth machinery PM overhaul schedules (`PUMP-101`, `BOILER-02`, `COMP-07`, `TURBINE-04`, `REACTOR-05`).
+- **Predictive Risk AI**: Created `pm_engine.py` calculating predictive failure risk percentages and generating PM action items.
+- **AI Microservice API**: Added `POST /pm/analyze` endpoint in `ai_service/app/api/pm.py`.
+- **Backend API Gateway**: Created `pmController.js` and `pmRoutes.js` exposing `GET/POST /api/v1/pm-recommendations`, `POST /analyze/:assetId`, `PUT /:id/status`, and `POST /seed`.
+- **Frontend PM Command Center**: Built `PMRecommendationsPage.jsx` featuring 4 KPI cards, risk score progress bars, action item checklists, and status update buttons.
+
+---
+
 ## [11.0.0] - 2026-07-20
 
 ### Completed Phase 11: Hybrid Reciprocal Rank Fusion Search Interface
-- **Hybrid RRF Algorithm**: Created `hybrid_search.py` implementing Reciprocal Rank Fusion ($1/(60+Rank_{BM25}) + 1/(60+Rank_{FAISS})$) combining sparse BM25 keyword matching and dense FAISS vector cosine similarity.
-- **AI Microservice API**: Added `POST /search/hybrid` endpoint in `ai_service/app/api/hybrid.py`.
-- **Backend API Gateway**: Created `hybridSearchController.js` and `hybridSearchRoutes.js` exposing `POST /api/v1/search/hybrid`.
-- **Frontend Search Page**: Built `KnowledgeSearchPage.jsx` providing search mode toggles (**Hybrid RRF**, **FAISS Vector Only**), BM25 rank tags, FAISS rank tags, and RRF score percentages.
+- Created `hybrid_search.py` (RRF BM25 + FAISS algorithm), `POST /search/hybrid` endpoint, and `KnowledgeSearchPage.jsx`.
 
 ---
 
