@@ -7,15 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [14.0.0] - 2026-07-20
+
+### Completed Phase 14: Industrial Analytics & Audit Dashboard
+- **Backend API Gateway**: Created `analyticsController.js` and `analyticsRoutes.js` exposing `GET /api/v1/analytics/summary` aggregating vector chunk counts, document types, search latency metrics, confidence distribution, and low-confidence audit logs.
+- **Frontend Analytics UI**: Built `AnalyticsPage.jsx` with Recharts AreaChart query volume curve, Donut Chart confidence distribution, BarChart document repository breakdown, and low-confidence knowledge gap audit table.
+
+---
+
 ## [13.0.0] - 2026-07-20
 
 ### Completed Phase 13: Incident & Root Cause Analysis (RCA) Module
-- **Database & Schemas**: Created Mongoose `IncidentRCA` schema (`incidentRCAModel.js`) storing incident numbers, severity tags (`CRITICAL`, `HIGH`, `MEDIUM`), 5-Whys methodology step arrays, assigned corrective actions, and lifecycle status (`Under Investigation`, `RCA Completed`, `Actions Implemented`, `Closed`).
-- **Seeder Utility**: Built `seedIncidentRCAs.js` seeding initial 3 ground-truth plant outage RCAs (`INC-2026-COMP07`, `INC-2026-PUMP101`, `INC-2026-BOILER02`).
-- **AI 5-Whys Generator**: Created `rca_engine.py` generating structured 5-Whys methodological steps and preventative actions.
-- **AI Microservice API**: Added `POST /rca/generate-5whys` endpoint in `ai_service/app/api/rca.py`.
-- **Backend API Gateway**: Created `rcaController.js` and `rcaRoutes.js` exposing `GET/POST /api/v1/incidents`, `POST /:id/generate-rca`, `PUT /:id/status`, and `POST /seed`.
-- **Frontend RCA Workspace**: Built `IncidentRCAPage.jsx` featuring 4 KPI cards, expandable 5-Whys accordion traces, assigned corrective action trackers, and lifecycle status buttons.
+- Created `IncidentRCA` schema, `seedIncidentRCAs.js`, `rca_engine.py`, `POST /rca/generate-5whys` endpoint, and `IncidentRCAPage.jsx`.
 
 ---
 
