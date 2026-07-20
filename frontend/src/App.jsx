@@ -8,6 +8,8 @@ import MainLayout from './components/layout/MainLayout';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import AdminUsersPage from './pages/AdminUsersPage';
+import AssetsPage from './pages/AssetsPage';
+import AssetDetailPage from './pages/AssetDetailPage';
 
 export default function App() {
   return (
@@ -35,6 +37,29 @@ export default function App() {
                 <ProtectedRoute>
                   <MainLayout>
                     <DashboardPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Plant Asset Graph & Machinery Hierarchy */}
+            <Route
+              path="/assets"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <AssetsPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/assets/:id"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <AssetDetailPage />
                   </MainLayout>
                 </ProtectedRoute>
               }

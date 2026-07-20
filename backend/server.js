@@ -9,6 +9,7 @@ import { setupSwagger } from './src/config/swagger.js';
 import authRoutes from './src/routes/authRoutes.js';
 import userRoutes from './src/routes/userRoutes.js';
 import auditRoutes from './src/routes/auditRoutes.js';
+import assetRoutes from './src/routes/assetRoutes.js';
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ setupSwagger(app);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/audit-logs', auditRoutes);
+app.use('/api/v1/assets', assetRoutes);
 
 /**
  * @openapi
