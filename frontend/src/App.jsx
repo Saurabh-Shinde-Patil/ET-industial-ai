@@ -12,6 +12,7 @@ import AssetsPage from './pages/AssetsPage';
 import AssetDetailPage from './pages/AssetDetailPage';
 import DocumentsPage from './pages/DocumentsPage';
 import VectorSearchPage from './pages/VectorSearchPage';
+import ChatPage from './pages/ChatPage';
 
 export default function App() {
   return (
@@ -74,6 +75,18 @@ export default function App() {
                 <ProtectedRoute>
                   <MainLayout>
                     <DocumentsPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* AI Operations Assistant Conversational RAG */}
+            <Route
+              path="/chat"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <ChatPage />
                   </MainLayout>
                 </ProtectedRoute>
               }

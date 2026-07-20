@@ -119,3 +119,24 @@ export const indexChunksInFAISS = async (chunks) => {
     throw error;
   }
 };
+
+/**
+ * Call Python Conversational RAG Engine
+ */
+export const generateRAGResponseFromAI = async (query, assetId = null, topK = 4) => {
+  try {
+    const response = await axios.post(
+      `${AI_SERVICE_URL}/chat`,
+      {
+        query,
+        asset_id: assetId,
+        top_k: topK,
+      },
+      { timeout: 20000 }
+    );
+    return response.data;
+  } catch (error) {
+    logger.error(`AI RAG Chat proxy failed: ${error.message}`);
+    throw error;
+  }
+};
