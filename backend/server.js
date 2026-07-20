@@ -8,6 +8,7 @@ import { checkAIServiceHealth } from './src/services/aiServiceProxy.js';
 import { setupSwagger } from './src/config/swagger.js';
 import authRoutes from './src/routes/authRoutes.js';
 import userRoutes from './src/routes/userRoutes.js';
+import auditRoutes from './src/routes/auditRoutes.js';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ setupSwagger(app);
 // Mount API Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/audit-logs', auditRoutes);
 
 /**
  * @openapi

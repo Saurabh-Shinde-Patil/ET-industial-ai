@@ -3,9 +3,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
+import { RoleGuard } from './components/layout/RoleGuard';
 import MainLayout from './components/layout/MainLayout';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import AdminUsersPage from './pages/AdminUsersPage';
 
 export default function App() {
   return (
@@ -34,6 +36,20 @@ export default function App() {
                   <MainLayout>
                     <DashboardPage />
                   </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin Personnel & Audit Logs View (Role Guarded) */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <RoleGuard allowedRoles={['Admin', 'Knowledge Admin']}>
+                    <MainLayout>
+                      <AdminUsersPage />
+                    </MainLayout>
+                  </RoleGuard>
                 </ProtectedRoute>
               }
             />

@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 import logger from '../config/logger.js';
 import { seedInitialUsers } from '../utils/seedUsers.js';
+import { logAuditEvent } from '../middleware/auditLogger.js';
 
 /**
  * Generate signed JWT Token
@@ -69,6 +70,9 @@ export const loginUser = async (req, res, next) => {
     const token = generateToken(user._id, user.role);
 
     logger.info(`Successful login: User ${user.username} (${user.role})`);
+    
+    // Asynchronously log audit event
+    logAuditEvent(user._id, 'AUTH_LOGIN', `User '${user.username}' signed in with role '${user.role}'`, req.ip);
 
     res.status(200).json({
       success: true,
@@ -128,6 +132,8 @@ export const registerUser = async (req, res, next) => {
     const token = generateToken(user._id, user.role);
 
     logger.info(`New user registered: ${user.username} (${user.role})`);
+    
+    logAuditEvent(user._id, 'AUTH_REGISTER', `New user registered: '${user.username}' (${user.role})`, req.ip);
 
     res.status(201).json({
       success: true,
