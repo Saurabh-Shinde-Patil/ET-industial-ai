@@ -9,14 +9,14 @@
 
 ## 1. Current Project Status
 
-- **Project Status**: Phase 7 Complete (`PyTesseract OCR & Scanned PDF Extraction Engine`). Phase 8 (`Text Chunking & SentenceTransformers Vector Embedding Pipeline`) ready to execute.
-- **Current Phase**: Phase 7 Completed / Phase 8 Ready
-- **Current Feature**: Python FastAPI Multi-format Extractor, PyTesseract OCR Fallback, Noise Cleaner & ExtractionModal UI
+- **Project Status**: Phase 8 Complete (`Text Chunking & SentenceTransformers Vector Embedding Pipeline`). Phase 9 (`FAISS Vector Database Engine & Indexing Manager`) ready to execute.
+- **Current Phase**: Phase 8 Completed / Phase 9 Ready
+- **Current Feature**: Sliding Window Chunker, SentenceTransformers `all-MiniLM-L6-v2` (384-dim), Chunk Model & VectorizeModal UI
 - **Current File**: `docs/Memory.md`
-- **Current Sprint**: Sprint 7 (OCR & Multi-format Parsing Engine)
+- **Current Sprint**: Sprint 8 (Vector Embeddings & Chunking Infrastructure)
 - **Current Branch**: `main`
 - **Last Updated**: 2026-07-20
-- **Next Task**: Await approval to start Phase 8 (Text Chunking & SentenceTransformers Vector Embedding Pipeline: Sliding window recursive text splitter, SentenceTransformers `all-MiniLM-L6-v2` 384-dim embedding generator, Python `/embed` microservice endpoint, chunk database model).
+- **Next Task**: Await approval to start Phase 9 (FAISS Vector Database Engine & Indexing Manager: FAISS L2/Cosine index manager in Python, index persistence on disk, similarity search endpoint `/vector-search`, top-k document retrieval).
 
 ---
 
@@ -40,9 +40,9 @@
 - [x] **Phase 5**: Asset Hierarchy & Knowledge Graph (Mongoose Asset schema with self-referencing parentAssetId, 10 physical asset seeder utility `seedAssets.js`, asset REST endpoints `GET/POST /api/v1/assets`, `GET /assets/tree`, `GET /assets/:id`, assetService, interactive expandable AssetTree component, AssetModal form, AssetsPage split view, and AssetDetailPage).
 - [x] **Phase 6**: Document Management System & Asset Association Pipeline (Mongoose Document schema, Multer uploadMiddleware for 50MB PDF/DOCX/TXT/PNG/JPG files, 5 ground-truth document seeder `seedDocuments.js`, document REST endpoints `POST /documents/upload`, `GET /documents`, `GET /documents/:id`, `PUT /documents/:id/link-assets`, `DELETE /documents/:id`, documentService, UploadModal drag-and-drop uploader with asset selector, and DocumentsPage catalog table).
 - [x] **Phase 7**: PyTesseract OCR & Scanned PDF Extraction Engine (Python FastAPI `/extract` endpoint in `extract.py`, multi-format file parser `extractor.py`, PyTesseract OCR fallback for scanned schematics, industrial text cleaner `cleaner.py`, Express backend `aiServiceProxy` integration, `POST /api/v1/documents/:id/extract` endpoint, `ExtractionModal.jsx` output viewer, and OCR action button on `DocumentsPage.jsx`).
+- [x] **Phase 8**: Text Chunking & SentenceTransformers Vector Embedding Pipeline (Mongoose Chunk schema, `chunker.py` sliding window text splitter with heading & safety alert preservation, `embedder.py` SentenceTransformers `all-MiniLM-L6-v2` 384-dim embedding generator, FastAPI `/embed` and `/embed/chunk` endpoints, `vectorController.js` and `vectorRoutes.js` `POST /api/v1/documents/:id/vectorize`, and `VectorizeModal.jsx` pipeline viewer).
 
-### Pending Implementation (Phases 8 - 15)
-- [ ] Phase 8: Text Chunking & SentenceTransformers Vector Embedding Pipeline
+### Pending Implementation (Phases 9 - 15)
 - [ ] Phase 9: FAISS / ChromaDB Vector Database & Storage Manager
 - [ ] Phase 10: Conversational RAG Engine with Citations & Confidence Meter
 - [ ] Phase 11: Hybrid Reciprocal Rank Fusion Search Interface
@@ -55,14 +55,15 @@
 
 ## 3. Living Development Log
 
-### Log Entry: 2026-07-20 — Phase 7 PyTesseract OCR & Scanned PDF Extraction Engine Complete
-- Created `ai_service/app/services/cleaner.py` cleaning OCR noise, standardizing units (`m³/h`, `°C`, `bar`, `RPM`), and preserving equipment codes (`PUMP-101`, `BOILER-02`).
-- Created `ai_service/app/services/extractor.py` handling PDF (pdfplumber + PyTesseract fallback), DOCX, TXT, and image OCR.
-- Created `ai_service/app/api/extract.py` exposing `POST /extract`.
-- Updated `ai_service/main.py` mounting extract router.
-- Updated `backend/src/services/aiServiceProxy.js` with `extractDocumentTextFromAI`.
-- Updated `backend/src/controllers/documentController.js` and `documentRoutes.js` exposing `POST /api/v1/documents/:id/extract`.
-- Updated `frontend/src/services/documentService.js` with `extractDocumentText`.
-- Built `ExtractionModal.jsx` displaying cleaned text, OCR engine status, and word count.
-- Integrated `OCR` trigger button into `DocumentsPage.jsx`.
-- Code pushed to GitHub (`63181e4`). Phase 7 complete.
+### Log Entry: 2026-07-20 — Phase 8 Text Chunking & Vector Embedding Pipeline Complete
+- Created `backend/src/models/chunkModel.js` schema for storing 384-dimensional vector embeddings, token counts, and metadata.
+- Created `ai_service/app/services/chunker.py` sliding window recursive chunker (target size: 500 chars, overlap: 100 chars).
+- Created `ai_service/app/services/embedder.py` SentenceTransformers `all-MiniLM-L6-v2` dense vector embedding generator.
+- Created `ai_service/app/api/embed.py` exposing `POST /embed` and `POST /embed/chunk`.
+- Updated `ai_service/main.py` mounting embed router.
+- Updated `backend/src/services/aiServiceProxy.js` with `generateEmbeddingFromAI` and `chunkAndEmbedDocumentFromAI`.
+- Created `backend/src/controllers/vectorController.js` and `vectorRoutes.js` exposing `POST /api/v1/documents/:id/vectorize` and `GET /api/v1/documents/:id/chunks`.
+- Updated `frontend/src/services/documentService.js` with `vectorizeDocument` and `getDocumentChunks`.
+- Built `VectorizeModal.jsx` displaying pipeline output, chunk list preview, and token count.
+- Integrated `Vectorize` action button into `DocumentsPage.jsx`.
+- Code pushed to GitHub (`990906a`). Phase 8 complete.

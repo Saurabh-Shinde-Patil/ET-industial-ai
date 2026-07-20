@@ -7,15 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [8.0.0] - 2026-07-20
+
+### Completed Phase 8: Text Chunking & SentenceTransformers Vector Embedding Pipeline
+- **Database & Schemas**: Created Mongoose `Chunk` collection schema (`chunkModel.js`) storing 384-dimensional vector embeddings, chunk indices, token counts, asset references, and metadata.
+- **Text Chunker**: Created `chunker.py` sliding-window recursive text splitter (target size 500 chars, overlap 100 chars) preserving section headings and safety alerts (`DANGER`, `WARNING`, `NOTE`).
+- **Vector Embeddings**: Created `embedder.py` SentenceTransformers `all-MiniLM-L6-v2` dense vector model generating 384-dim normalized float vectors.
+- **AI Microservice API**: Added `POST /embed` and `POST /embed/chunk` endpoints in `ai_service/app/api/embed.py`.
+- **Backend Vector Controller**: Created `vectorController.js` and `vectorRoutes.js` exposing `POST /api/v1/documents/:id/vectorize` and `GET /api/v1/documents/:id/chunks`.
+- **Pipeline Viewer**: Built `VectorizeModal.jsx` displaying vector chunk counts, dimension status, and text chunk list preview.
+- **Document Catalog**: Integrated interactive `Vectorize` button into `DocumentsPage.jsx`.
+
+---
+
 ## [7.0.0] - 2026-07-20
 
 ### Completed Phase 7: PyTesseract OCR & Scanned PDF Extraction Engine
-- **Text Extraction Engine**: Created `extractor.py` in Python FastAPI microservice supporting PDF (pdfplumber), Word (`python-docx`), plain text, and PyTesseract OCR fallback for scanned diagrams & low-density PDFs.
-- **Industrial Text Cleaner**: Created `cleaner.py` normalizing whitespace, removing OCR artifacts, and standardizing technical units (`m³/h`, `°C`, `bar`, `RPM`).
-- **AI Microservice API**: Added `POST /extract` endpoint in `ai_service/app/api/extract.py`.
-- **Backend Integration**: Updated `aiServiceProxy.js` and added `POST /api/v1/documents/:id/extract` in Express backend `documentController.js`.
-- **Extraction Modal**: Built `ExtractionModal.jsx` displaying extracted text preview, word counts, and PyTesseract status.
-- **Document Catalog**: Integrated interactive `OCR` button into `DocumentsPage.jsx`.
+- Created `extractor.py`, `cleaner.py`, `POST /extract` endpoint, `aiServiceProxy`, and `ExtractionModal.jsx`.
 
 ---
 
