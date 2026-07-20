@@ -7,16 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.0.0] - 2026-07-20
+
+### Completed Phase 5: Asset Hierarchy & Knowledge Graph
+- **Database & Schemas**: Created Mongoose `Asset` collection schema (`assetModel.js`) supporting self-referencing `parentAssetId`, category indices, status flags, and key-value specifications maps.
+- **Seeder Utility**: Built `seedAssets.js` populating 10 primary industrial machinery nodes (`PUMP-101`, `BOILER-02`, `TURBINE-04`, `COMP-07`, `HEX-12`, `VALVE-88`, etc.) into MongoDB.
+- **Backend Asset REST API**: Added `GET /api/v1/assets/tree`, `GET /api/v1/assets`, `GET /api/v1/assets/:id`, `POST /api/v1/assets`, `PUT /api/v1/assets/:id`, `DELETE /api/v1/assets/:id`, and `POST /api/v1/assets/seed` endpoints.
+- **Frontend Services**: Built `assetService.js` client wrapper.
+- **Interactive Tree Component**: Built `AssetTree.jsx` enabling expandable/collapsible plant tree traversal with operational status badges.
+- **Asset Registration Modal**: Built `AssetModal.jsx` featuring dynamic key-value specification fields.
+- **Asset Pages**: Built `AssetsPage.jsx` split view and `AssetDetailPage.jsx` technical profile view.
+
+---
+
 ## [4.0.0] - 2026-07-20
 
 ### Completed Phase 4: User & Role Administration & Security Audit Logging
-- **Database & Schemas**: Created Mongoose `AuditLog` collection schema (`auditLogModel.js`) capturing user ID, action event type, timestamp, IP address, and details.
-- **Middleware**: Built `auditLogger.js` helper module to record authorization, role updates, and authentication events.
-- **Backend Admin REST API**: Added `GET /api/v1/users`, `POST /api/v1/users`, `PUT /api/v1/users/:id/role`, `PUT /api/v1/users/:id/status`, and `GET /api/v1/audit-logs` endpoints in `userController.js` and `auditController.js`.
-- **Frontend Services**: Built `userService.js` client wrapper.
-- **Admin Control Panel**: Built `AdminUsersPage.jsx` featuring tabbed navigation for Personnel Directory and Security Audit Trail.
-- **Admin Modals**: Built `UserModal.jsx` (create personnel) and `RoleModal.jsx` (re-assign RBAC role).
-- **Audit Viewer**: Built `AuditLogViewer.jsx` rendering security compliance logs with action filtering.
+- Created `AuditLog` collection, `auditLogger` middleware, Admin user management APIs, `AdminUsersPage.jsx`, and `AuditLogViewer.jsx`.
 
 ---
 

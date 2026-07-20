@@ -9,14 +9,14 @@
 
 ## 1. Current Project Status
 
-- **Project Status**: Phase 4 Complete (`User & Role Administration & Security Audit Logging`). Phase 5 (`Asset Hierarchy & Knowledge Graph`) ready to execute.
-- **Current Phase**: Phase 4 Completed / Phase 5 Ready
-- **Current Feature**: Admin User Directory, Role Assignment Modals & Security Audit Log Viewer
+- **Project Status**: Phase 5 Complete (`Asset Hierarchy & Knowledge Graph`). Phase 6 (`Document Management System`) ready to execute.
+- **Current Phase**: Phase 5 Completed / Phase 6 Ready
+- **Current Feature**: Plant Machinery Asset Graph, Hierarchical Tree Engine, Asset Detail Profiles & Specs Editor
 - **Current File**: `docs/Memory.md`
-- **Current Sprint**: Sprint 4 (Admin & Security Control)
+- **Current Sprint**: Sprint 5 (Asset Graph & Machinery Modeling)
 - **Current Branch**: `main`
 - **Last Updated**: 2026-07-20
-- **Next Task**: Await approval to start Phase 5 (Asset Hierarchy & Knowledge Graph: Mongoose Asset schema, parent-child tree queries, AssetTree component, Asset Detail view, technical specs editor).
+- **Next Task**: Await approval to start Phase 6 (Document Management System: Multi-format uploader UI, Multer middleware, Document Mongoose schema, doc-to-asset linking, document catalog table).
 
 ---
 
@@ -37,10 +37,10 @@
 - [x] **Phase 2**: Authentication & RBAC System (Mongoose User schema with BCrypt password hashing, JWT authorization, Express auth/rbac middleware, 8 plant role seeder, AuthContext, ProtectedRoute, RoleGuard, industrial dark command center LoginPage UI).
 - [x] **Phase 3**: Main Layout & Dashboard Infrastructure (ThemeContext dark/light switcher, MainLayout application shell, responsive Sidebar with collapse & microservice status indicators, Navbar with Global Search shortcut & user badges, Command Center DashboardPage with 4 KPI cards, Recharts query activity curve, document catalog bar chart, and Low Confidence Query Audit Log table).
 - [x] **Phase 4**: User & Role Administration & Security Audit Logging (Mongoose AuditLog schema, auditLogger middleware, Admin user CRUD endpoints `GET/POST /api/v1/users`, `PUT /users/:id/role`, `PUT /users/:id/status`, `GET /api/v1/audit-logs`, userService, AdminUsersPage, UserModal, RoleModal, and AuditLogViewer).
+- [x] **Phase 5**: Asset Hierarchy & Knowledge Graph (Mongoose Asset schema with self-referencing parentAssetId, 10 physical asset seeder utility `seedAssets.js`, asset REST endpoints `GET/POST /api/v1/assets`, `GET /assets/tree`, `GET /assets/:id`, assetService, interactive expandable AssetTree component, AssetModal form, AssetsPage split view, and AssetDetailPage).
 
-### Pending Implementation (Phases 5 - 15)
-- [ ] Phase 5: Plant Asset Hierarchy Tree & Detail Engine
-- [ ] Phase 6: Document Management & Asset Association Pipeline
+### Pending Implementation (Phases 6 - 15)
+- [ ] Phase 6: Document Management System & Asset Association Pipeline
 - [ ] Phase 7: PyTesseract OCR & Scanned PDF Extraction Engine
 - [ ] Phase 8: Text Chunking & SentenceTransformers Vector Embedding Pipeline
 - [ ] Phase 9: FAISS / ChromaDB Vector Database & Storage Manager
@@ -53,16 +53,29 @@
 
 ---
 
-## 3. Living Development Log
+## 3. Seeded Industrial Assets (10 Primary Machinery Nodes)
+1. `PUMP-101`: High-Pressure Main Feedwater Centrifugal Pump (Pumps)
+2. `BOILER-02`: High-Pressure Industrial Water-Tube Steam Boiler (Boilers)
+3. `VALVE-88`: Motor-Operated Steam Emergency Isolation Valve (Child of BOILER-02)
+4. `COMP-07`: Multi-Stage Heavy Industrial Screw Air Compressor (Compressors)
+5. `TURBINE-04`: Multi-Stage Condensing Steam Turbine Generator (Turbines)
+6. `HEX-12`: Shell & Tube Feedwater Pre-Heater Heat Exchanger (Heat Exchangers)
+7. `CONVEYOR-03`: Heavy-Duty Coal Handling Belt Conveyor (Conveyors)
+8. `XFRM-01`: Main Plant Step-Down Oil-Filled Power Transformer (Transformers)
+9. `REACTOR-05`: Jacketed Continuous Stirred Tank Chemical Reactor (Reactors)
+10. `CHILLER-09`: Industrial Centrifugal Water Chiller Unit (Chillers)
 
-### Log Entry: 2026-07-20 — Phase 4 User & Role Administration Complete
-- Created `backend/src/models/auditLogModel.js` schema for immutable security event tracking.
-- Created `backend/src/middleware/auditLogger.js` helper module.
-- Expanded `userController.js` with `getUsers`, `createUser`, `updateUserRole`, `toggleUserStatus`.
-- Created `auditController.js` and `auditRoutes.js` for `GET /api/v1/audit-logs`.
-- Built `frontend/src/services/userService.js` client wrapper.
-- Built `UserModal.jsx` (create personnel) and `RoleModal.jsx` (modify RBAC role).
-- Built `AuditLogViewer.jsx` rendering system security audit trail events.
-- Built `AdminUsersPage.jsx` with tabs for Personnel Directory and Security Audit Trail.
-- Registered `/admin` route in `App.jsx` protected by `RoleGuard` (`Admin`, `Knowledge Admin`).
-- Phase 4 complete & committed to git.
+---
+
+## 4. Living Development Log
+
+### Log Entry: 2026-07-20 — Phase 5 Asset Hierarchy & Knowledge Graph Complete
+- Created `backend/src/models/assetModel.js` schema with self-referencing `parentAssetId` and Virtual getter for `children`.
+- Created `backend/src/utils/seedAssets.js` seeding 10 physical industrial assets defined in `DemoData.md`.
+- Created `assetController.js` and `assetRoutes.js` supporting `GET /api/v1/assets/tree`, `GET /api/v1/assets`, `GET /api/v1/assets/:id`, `POST /api/v1/assets`, `PUT /api/v1/assets/:id`, `DELETE /api/v1/assets/:id`.
+- Created `frontend/src/services/assetService.js` client wrapper.
+- Built `AssetTree.jsx` component supporting recursive expansion and operational status pills.
+- Built `AssetModal.jsx` modal for registering asset nodes and managing key-value specs.
+- Built `AssetsPage.jsx` split view browser and `AssetDetailPage.jsx` profile page.
+- Registered `/assets` and `/assets/:id` routes in `App.jsx`.
+- Phase 5 complete & committed to git.
