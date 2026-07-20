@@ -15,6 +15,7 @@ import KnowledgeSearchPage from './pages/KnowledgeSearchPage';
 import ChatPage from './pages/ChatPage';
 import PMRecommendationsPage from './pages/PMRecommendationsPage';
 import IncidentRCAPage from './pages/IncidentRCAPage';
+import AnalyticsPage from './pages/AnalyticsPage';
 
 export default function App() {
   return (
@@ -125,6 +126,18 @@ export default function App() {
                 <ProtectedRoute>
                   <MainLayout>
                     <IncidentRCAPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Industrial Analytics & Audit Dashboard */}
+            <Route
+              path="/analytics"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <AnalyticsPage />
                   </MainLayout>
                 </ProtectedRoute>
               }
