@@ -10,6 +10,7 @@ import DashboardPage from './pages/DashboardPage';
 import AdminUsersPage from './pages/AdminUsersPage';
 import AssetsPage from './pages/AssetsPage';
 import AssetDetailPage from './pages/AssetDetailPage';
+import DocumentsPage from './pages/DocumentsPage';
 
 export default function App() {
   return (
@@ -60,6 +61,18 @@ export default function App() {
                 <ProtectedRoute>
                   <MainLayout>
                     <AssetDetailPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Document Management Repository */}
+            <Route
+              path="/documents"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <DocumentsPage />
                   </MainLayout>
                 </ProtectedRoute>
               }

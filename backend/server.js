@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import path from 'path';
 import { connectDB } from './src/config/db.js';
 import logger from './src/config/logger.js';
 import { checkAIServiceHealth } from './src/services/aiServiceProxy.js';
@@ -10,6 +11,7 @@ import authRoutes from './src/routes/authRoutes.js';
 import userRoutes from './src/routes/userRoutes.js';
 import auditRoutes from './src/routes/auditRoutes.js';
 import assetRoutes from './src/routes/assetRoutes.js';
+import documentRoutes from './src/routes/documentRoutes.js';
 
 dotenv.config();
 
@@ -22,6 +24,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve uploaded files statically
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
 // Connect to MongoDB
 connectDB();
 
@@ -33,6 +38,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/audit-logs', auditRoutes);
 app.use('/api/v1/assets', assetRoutes);
+app.use('/api/v1/documents', documentRoutes);
 
 /**
  * @openapi
