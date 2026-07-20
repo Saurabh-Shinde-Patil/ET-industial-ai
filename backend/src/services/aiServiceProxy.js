@@ -50,3 +50,38 @@ export const extractDocumentTextFromAI = async (filePath) => {
     throw error;
   }
 };
+
+/**
+ * Generate 384-dimensional vector embedding for text
+ */
+export const generateEmbeddingFromAI = async (text) => {
+  try {
+    const response = await axios.post(`${AI_SERVICE_URL}/embed`, { text }, { timeout: 10000 });
+    return response.data.embedding;
+  } catch (error) {
+    logger.error(`AI Embedding proxy failed: ${error.message}`);
+    throw error;
+  }
+};
+
+/**
+ * Chunk industrial document text and generate 384-dim vector embeddings
+ */
+export const chunkAndEmbedDocumentFromAI = async (documentId, text) => {
+  try {
+    const response = await axios.post(
+      `${AI_SERVICE_URL}/embed/chunk`,
+      {
+        document_id: documentId,
+        text,
+        chunk_size: 500,
+        chunk_overlap: 100,
+      },
+      { timeout: 60000 }
+    );
+    return response.data;
+  } catch (error) {
+    logger.error(`AI Chunk & Embed proxy failed: ${error.message}`);
+    throw error;
+  }
+};

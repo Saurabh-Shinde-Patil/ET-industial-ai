@@ -4,7 +4,7 @@ import uvicorn
 import logging
 
 from app.core.config import settings
-from app.api import health, extract
+from app.api import health, extract, embed
 
 # Logging Setup
 logging.basicConfig(
@@ -32,6 +32,7 @@ app.add_middleware(
 # Include Routers
 app.include_router(health.router)
 app.include_router(extract.router)
+app.include_router(embed.router)
 
 @app.get("/")
 async def root():

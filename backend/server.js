@@ -12,6 +12,7 @@ import userRoutes from './src/routes/userRoutes.js';
 import auditRoutes from './src/routes/auditRoutes.js';
 import assetRoutes from './src/routes/assetRoutes.js';
 import documentRoutes from './src/routes/documentRoutes.js';
+import vectorRoutes from './src/routes/vectorRoutes.js';
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/audit-logs', auditRoutes);
 app.use('/api/v1/assets', assetRoutes);
+app.use('/api/v1/documents', vectorRoutes);
 app.use('/api/v1/documents', documentRoutes);
 
 /**

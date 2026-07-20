@@ -26,6 +26,22 @@ export const documentService = {
   },
 
   /**
+   * Trigger sliding window chunking & 384-dim SentenceTransformers vectorization
+   */
+  async vectorizeDocument(id) {
+    const response = await apiClient.post(`/documents/${id}/vectorize`);
+    return response.data;
+  },
+
+  /**
+   * Fetch stored vector chunks for document
+   */
+  async getDocumentChunks(id) {
+    const response = await apiClient.get(`/documents/${id}/chunks`);
+    return response.data;
+  },
+
+  /**
    * Upload multi-format file with metadata & asset links
    */
   async uploadDocument(formData) {

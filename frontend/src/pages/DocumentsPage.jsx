@@ -3,6 +3,7 @@ import { documentService } from '../services/documentService';
 import { assetService } from '../services/assetService';
 import UploadModal from '../components/documents/UploadModal';
 import ExtractionModal from '../components/documents/ExtractionModal';
+import VectorizeModal from '../components/documents/VectorizeModal';
 import {
   FileText,
   UploadCloud,
@@ -15,6 +16,7 @@ import {
   Cpu,
   Trash2,
   Sparkles,
+  Layers,
   Loader2,
 } from 'lucide-react';
 
@@ -23,12 +25,16 @@ export default function DocumentsPage() {
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [extractingId, setExtractingId] = useState(null);
+  const [vectorizingId, setVectorizingId] = useState(null);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [assetFilter, setAssetFilter] = useState('');
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isExtractionModalOpen, setIsExtractionModalOpen] = useState(false);
+  const [isVectorizeModalOpen, setIsVectorizeModalOpen] = useState(false);
   const [extractionResult, setExtractionResult] = useState(null);
+  const [vectorizeResult, setVectorizeResult] = useState(null);
+  const [vectorChunks, setVectorChunks] = useState([]);
   const [message, setMessage] = useState('');
 
   const fetchData = async () => {
@@ -79,6 +85,22 @@ export default function DocumentsPage() {
     }
   };
 
+  const handleVectorizeDoc = async (docId) => {
+    setVectorizingId(docId);
+    try {
+      const vecRes = await documentService.vectorizeDocument(docId);
+      const chunksRes = await documentService.getDocumentChunks(docId);
+      setVectorizeResult(vecRes);
+      setVectorChunks(chunksRes.chunks);
+      setIsVectorizeModalOpen(true);
+      fetchData();
+    } catch (err) {
+      console.error('Vectorization failed:', err);
+    } finally {
+      setVectorizingId(null);
+    }
+  };
+
   const handleDeleteDoc = async (id, title) => {
     if (window.confirm(`Are you sure you want to remove document '${title}'?`)) {
       try {
@@ -97,13 +119,13 @@ export default function DocumentsPage() {
       case 'Extracted':
         return (
           <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-industrial-emerald/15 text-industrial-emerald border border-industrial-emerald/30 inline-flex items-center gap-1">
-            <CheckCircle className="w-3 h-3" /> Extracted
+            <CheckCircle className="w-3 h-3" /> Vectorized
           </span>
         );
       case 'Pending':
         return (
           <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-industrial-amber/15 text-industrial-amber border border-industrial-amber/30 inline-flex items-center gap-1">
-            <Clock className="w-3 h-3" /> Pending OCR
+            <Clock className="w-3 h-3" /> Pending Vectorization
           </span>
         );
       case 'Failed':
@@ -124,14 +146,14 @@ export default function DocumentsPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2.5 py-0.5 rounded-full bg-industrial-cyan/15 border border-industrial-cyan/40 text-industrial-cyan font-mono text-[11px]">
-              KNOWLEDGE REPOSITORY & OCR ENGINE
+              KNOWLEDGE REPOSITORY & VECTOR ENGINE
             </span>
           </div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-industrial-textMain">
-            Document Catalog & PyTesseract OCR Engine
+            Document Catalog & Vector Embedding Pipeline
           </h1>
           <p className="text-xs text-industrial-textSub mt-1 max-w-2xl">
-            Multi-format industrial text extraction, PyTesseract OCR for scanned schematics, noise cleaning, and asset linking.
+            Multi-format industrial text extraction, PyTesseract OCR, sliding window chunking, and SentenceTransformers 384-dim vector embeddings.
           </p>
         </div>
 
@@ -220,8 +242,8 @@ export default function DocumentsPage() {
                 <th className="py-2.5 px-3">Document Title</th>
                 <th className="py-2.5 px-3">Type</th>
                 <th className="py-2.5 px-3">Linked Machinery Assets</th>
-                <th className="py-2.5 px-3">Vector & OCR Status</th>
-                <th className="py-2.5 px-3">Size & Ver</th>
+                <th className="py-2.5 px-3">Vector Status</th>
+                <th className="py-2.5 px-3">Chunks & Ver</th>
                 <th className="py-2.5 px-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -259,8 +281,8 @@ export default function DocumentsPage() {
                   </td>
 
                   <td className="py-3.5 px-3 font-mono text-industrial-textDim text-[11px]">
-                    <div>{(doc.fileSize / (1024 * 1024)).toFixed(2)} MB</div>
-                    <div className="text-industrial-cyan text-[10px]">{doc.version}</div>
+                    <div className="text-industrial-cyan font-semibold">{doc.chunkCount || 0} Vector Chunks</div>
+                    <div className="text-industrial-textDim text-[10px]">{doc.version}</div>
                   </td>
 
                   <td className="py-3.5 px-3 text-right">
@@ -268,15 +290,29 @@ export default function DocumentsPage() {
                       <button
                         onClick={() => handleExtractText(doc._id)}
                         disabled={extractingId === doc._id}
-                        className="px-2.5 py-1.5 rounded-lg bg-industrial-cyan/15 hover:bg-industrial-cyan/25 border border-industrial-cyan/40 text-industrial-cyan text-xs font-semibold flex items-center gap-1 transition-all disabled:opacity-50"
-                        title="Extract Text & OCR"
+                        className="px-2.5 py-1.5 rounded-lg bg-industrial-bgTertiary hover:bg-industrial-border border border-industrial-border text-industrial-textMain text-xs font-semibold flex items-center gap-1 transition-all disabled:opacity-50"
+                        title="OCR Extract Text"
                       >
                         {extractingId === doc._id ? (
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />
                         ) : (
-                          <Sparkles className="w-3.5 h-3.5" />
+                          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                         )}
                         <span>OCR</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleVectorizeDoc(doc._id)}
+                        disabled={vectorizingId === doc._id}
+                        className="px-2.5 py-1.5 rounded-lg bg-industrial-cyan/15 hover:bg-industrial-cyan/25 border border-industrial-cyan/40 text-industrial-cyan text-xs font-semibold flex items-center gap-1 transition-all disabled:opacity-50"
+                        title="Generate 384-dim Vector Chunks"
+                      >
+                        {vectorizingId === doc._id ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Layers className="w-3.5 h-3.5" />
+                        )}
+                        <span>Vectorize</span>
                       </button>
 
                       <button
@@ -306,6 +342,13 @@ export default function DocumentsPage() {
         isOpen={isExtractionModalOpen}
         onClose={() => setIsExtractionModalOpen(false)}
         result={extractionResult}
+      />
+
+      <VectorizeModal
+        isOpen={isVectorizeModalOpen}
+        onClose={() => setIsVectorizeModalOpen(false)}
+        result={vectorizeResult}
+        chunks={vectorChunks}
       />
     </div>
   );
